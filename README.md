@@ -8,6 +8,7 @@ This application is intended to be a proof of concept that will allow user to vi
 
 - RainViewer API (for rader visualization)
 - Google Maps API (for the underlying map, routing, trip logistics)
+  - OpenStreetMap is another option
 - National Weather Service API (weather conditions)
 
 ## Module Diagram
