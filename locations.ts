@@ -1,4 +1,6 @@
-import fetch from "node-fetch";
+// import fetch from "node-fetch";
+// const axios = require("axois");
+import axios from "axios";
 
 interface property {
   "@id": string;
@@ -19,15 +21,39 @@ interface feature {
   properties: property;
 }
 
+interface unitValue {
+  unitCode: string;
+  value: number;
+}
+
+interface forecast {
+  number: number;
+  name: string;
+  startTime: Date;
+  endTime: Date;
+  isDaytime: boolean;
+  temperature: number;
+  teperatureUnit: string;
+  temperatureTrend: string;
+  propabilityOfPrecipitation: unitValue;
+  dewpoint: unitValue;
+  relativeHumidity: unitValue;
+  windSpeed: string;
+  windDirection: string;
+  icon: string;
+  shortForecast: string;
+  detailedForecast: string;
+}
+
 class TripLocation {
   public longitude: number;
   public latitude: number;
   public address: string;
   private arrivalTime: Date;
-  private observationStations: string = "";
+  protected observationStations: string = "";
   private forecastHourly: string = "";
-  private forecast: string = "";
-  // private zoneId: string = "";
+  private forecast: forecast[];
+  protected alerts: any;
   public zoneId: string = "";
   public locationInfo: { city: string; state: string; timeZone: string } = {
     city: "",
@@ -47,7 +73,7 @@ class TripLocation {
   }
 
   // Initializes object with values received from API response
-  async init() {
+  async init(): Promise<void> {
     let city: string, state: string, timeZone: string;
     [
       this.forecastHourly,
@@ -59,22 +85,23 @@ class TripLocation {
     ] = await this.getRequestMetadata();
     this.locationInfo = { city, state, timeZone };
     this.forecast = await this.getForecast();
+    this.alerts = await this.getActiveAlerts();
   }
 
   // determines arrival time for location
-  getArrivalTime() {
-    //! This is currently hardcoded to six hours in the future!!!!!
+  protected getArrivalTime(): Date {
+    //! This is currently hardcoded to five hours in the future!!!!!
     const time: Date = new Date();
-    time.setHours(time.getHours() + 6);
+    time.setHours(time.getHours() + 5);
     return time;
   }
 
   // gets initial information from weather api about location
-  async getRequestMetadata() {
-    const res: any = await fetch(
+  protected async getRequestMetadata() {
+    const res: any = await axios.get(
       `https://api.weather.gov/points/${this.latitude},${this.longitude}`,
     );
-    const data: any = await res.json();
+    const data: any = res.data;
     const forecastHourly: string = data.properties.forecastHourly;
     const observationStations: string = data.properties.observationStations;
     const city: string = data.properties.relativeLocation.properties.city;
@@ -86,73 +113,118 @@ class TripLocation {
   }
 
   // retrieves and parses forecast information for location
-  async getForecast() {
-    const res: any = await fetch(this.forecastHourly);
-    const expiry: Date = new Date(await res.headers.get("expires"));
+  protected async getForecast(): Promise<forecast[]> {
+    const res: any = await axios.get(this.forecastHourly);
+    const expiry: Date = new Date(res.headers.expires);
     console.log(
       "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
     );
     console.log("getForecast request made at", new Date().toString());
     console.log("next expiry:               ", expiry.toString());
-    const data: any = await res.json();
-    for (let period of data.properties.periods) {
+    const data: any = res.data;
+    const forecast: forecast[] = this.getRelevantForecastData(
+      data.properties.periods,
+    );
+    this.scheduleNextRequest(this.getForecast.bind(this), expiry);
+    return forecast;
+  }
+
+  private getRelevantForecastData(periods: forecast[]): forecast[] {
+    let forecast: forecast = {} as forecast;
+    for (let period of periods) {
       const startTime: Date = new Date(period.startTime);
       const endTime: Date = new Date(period.endTime);
       if (
-        endTime.getTime() > this.arrivalTime.getTime() &&
-        startTime.getTime() < this.arrivalTime.getTime()
+        (endTime.getTime() > this.arrivalTime.getTime() &&
+          startTime.getTime() < this.arrivalTime.getTime()) ||
+        (endTime.getTime() > this.arrivalTime.getTime() + 900000 &&
+          startTime.getTime() < this.arrivalTime.getTime() - 900000) ||
+        (endTime.getTime() > this.arrivalTime.getTime() + 900000 &&
+          startTime.getTime() < this.arrivalTime.getTime() - 900000)
       ) {
-        const now: Date = new Date();
-        setTimeout(
-          this.getForecast.bind(this),
-          expiry.getTime() - now.getTime(),
-        );
-        return period;
+        forecast = period;
       }
     }
+    console.log("Forecast:", forecast);
+    return [forecast];
+  }
+
+  // checks for active warnings, watches, advisories, etc...
+  protected async getActiveAlerts(): Promise<feature[]> {
+    const res: any = await axios.get(
+      `https://api.weather.gov/alerts/active/zone/${this.zoneId}`,
+    );
+    const headers = res.headers;
+    const expiry: Date = new Date(headers.expires);
+    console.log("expiry:", expiry);
+    console.log("getActiveAlerts request made at", new Date().toString());
+    console.log("next expiry:                   ", expiry.toString());
+    const data: any = res.data;
+    this.scheduleNextRequest(this.getActiveAlerts.bind(this), expiry);
+    return data.features;
+  }
+
+  protected scheduleNextRequest(requestMethod: Function, expiry: Date): void {
+    const now: Date = new Date();
+    if (this.arrivalTime.getTime() - now.getTime() < 3600000) {
+      setTimeout(requestMethod, 4 * (expiry.getTime() - now.getTime()));
+    } else if (this.arrivalTime.getTime() - now.getTime() < 18000000) {
+      setTimeout(requestMethod, 20 * (expiry.getTime() - now.getTime()));
+    } else {
+      setTimeout(requestMethod, 3600000);
+    }
+  }
+}
+
+class ImportantLocation extends TripLocation {
+  private closestStation: string = "";
+  private currentConditions: any;
+
+  async init(): Promise<void> {
+    let city: string, state: string, timeZone: string, _: any;
+    [_, this.observationStations, this.zoneId, city, state, timeZone] =
+      await this.getRequestMetadata();
+    this.locationInfo = { city, state, timeZone };
+    this.closestStation = await this.getClosestObservationStation();
+    this.currentConditions = await this.getCurrentConditions();
+    console.log("Current Conditions:", this.currentConditions);
+    this.alerts = await this.getActiveAlerts();
+  }
+
+  // overrides arrivalTime function, setting current time to now
+  getArrivalTime(): Date {
+    return new Date();
+  }
+
+  // requests for current conditions for appropriate observation station
+  async getCurrentConditions(): Promise<void> {
+    const res: any = await axios.get(this.closestStation);
+    const data = res.data;
+    const currentConditions = data.features[0];
+    return currentConditions;
   }
 
   // determines best observation station to represent current conditions
-  async getClosestObservationStation(): Promise<string> {
-    const res: any = await fetch(this.observationStations);
-    const data: any = await res.json();
+  async getClosestObservationStation(): Promise<any> {
+    const res: any = await axios.get(this.observationStations);
+    const data: any = res.data;
+    const headers = res.headers;
     const features: feature[] = data.features;
     const closestStation: string = features[0].id;
     return `${closestStation}/observations`;
   }
 
-  // requests for current conditions for appropriate observation station
-
-  // checks for active warnings, watches, advisories, etc...
-  async getActiveAlerts(): Promise<feature[]> {
-    const res: any = await fetch(
-      `https://api.weather.gov/alerts/active/zone/${this.zoneId}`,
-    );
-    const expiry: Date = new Date(await res.headers.get("expires"));
-    console.log("getActiveAlerts request made at", new Date().toString());
-    console.log("next expiry:                   ", expiry.toString());
-    const data: any = await res.json();
+  scheduleNextRequest(requestMethod: Function, expiry: Date): void {
     const now: Date = new Date();
-    setTimeout(
-      this.getActiveAlerts.bind(this),
-      expiry.getTime() - now.getTime(),
-    );
-    return data.features;
+    setTimeout(requestMethod, expiry.getTime() - now.getTime());
   }
-
-  // schedules requests from api to keep location information up to date
-  // schedule(func: Function, expiry: string) {
-  //   setTimeout(func, parseInt(expiry) * 1000);
-  // }
 }
 
 const main = async () => {
   const location = new TripLocation("", 38.8894, -77.0352);
   await location.init();
-  console.log(location.locationInfo);
-  console.log(await location.getClosestObservationStation());
-  console.log(location.zoneId);
-  console.log(location.getActiveAlerts());
+  // const startLocation = new ImportantLocation("", 38.8894, -77.0352);
+  // await startLocation.init();
 };
 
 main();
