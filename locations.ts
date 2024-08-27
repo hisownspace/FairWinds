@@ -52,7 +52,7 @@ class TripLocation {
   private arrivalTime: Date;
   protected observationStations: string = "";
   private forecastHourly: string = "";
-  private forecast: forecast[];
+  private forecast: forecast[] = [] as forecast[];
   protected alerts: any;
   public zoneId: string = "";
   public locationInfo: { city: string; state: string; timeZone: string } = {
