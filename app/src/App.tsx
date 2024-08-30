@@ -6,7 +6,8 @@ import {
   APIProvider,
   MapCameraChangedEvent,
 } from "@vis.gl/react-google-maps";
-import Geocoding from "./Components/Geocoding";
+import Geocoding from "./Components/Geocoding/Geocoding";
+import LocationRange from "./Components/LocationRange/LocationRange";
 
 const API_KEY: string = process.env.VITE_GOOGLE_MAPS_API_KEY!;
 const MAP_ID: string = process.env.VITE_GOOGLE_MAPS_MAP_ID!;
@@ -60,7 +61,7 @@ function App() {
         apiKey={API_KEY}
         onLoad={() => console.log("Maps API has loaded.")}
       >
-        {lat && lng ? (
+        {lat && lng && accuracy ? (
           <div id="map">
             <Map
               mapId={MAP_ID}
@@ -80,6 +81,7 @@ function App() {
               </AdvancedMarker>
             </Map>
             <Geocoding />
+            <LocationRange accuracy={accuracy} lat={lat} lng={lng} />
           </div>
         ) : null}
       </APIProvider>
