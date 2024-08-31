@@ -17,8 +17,9 @@ export default function LocationRange({
 
   useEffect(() => {
     if (!maps) return;
+    console.log(accuracy);
 
-    const circ = new maps.Circle({
+    const circ: google.maps.Circle = new maps.Circle({
       strokeColor: "#0041a8",
       strokeOpacity: 0.4,
       strokeWeight: 1,
@@ -29,7 +30,7 @@ export default function LocationRange({
       radius: accuracy,
     });
     setCircle(circ);
-  }, [maps]);
+  }, [maps, lat, lng, accuracy]);
 
   useEffect(() => {
     if (!circle) return;
