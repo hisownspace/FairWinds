@@ -1,10 +1,7 @@
 import { useMapsLibrary, useMap } from "@vis.gl/react-google-maps";
 import { useEffect, useState } from "react";
 
-// const ADDRESS: string = "2708 Unicorn Ln NW, Washington, DC 20015";
-const ADDRESS: string = "";
-
-export default function Geocoding() {
+export default function Geocoding({ address }: { address: string }) {
   const map = useMap();
   const geocoding = useMapsLibrary("geocoding");
 
@@ -16,7 +13,7 @@ export default function Geocoding() {
 
     const geocoder = new geocoding.Geocoder();
 
-    geocoder.geocode({ address: ADDRESS }, (geocoderResponse) => {
+    geocoder.geocode({ address }, (geocoderResponse) => {
       if (!geocoderResponse) return;
       setLat(geocoderResponse[0].geometry.location.lat());
       setLng(geocoderResponse[0].geometry.location.lng());
@@ -24,7 +21,7 @@ export default function Geocoding() {
       // const lng = geocoderResponse[0].geometry.location.lng();
       // map.setCenter({ lat, lng });
     });
-  }, [geocoding]);
+  }, [geocoding, address]);
 
   useEffect(() => {
     if (!map || !lat || !lng) return;

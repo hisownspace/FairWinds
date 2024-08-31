@@ -9,7 +9,13 @@ interface PosProps {
   lng: number;
 }
 
-export default function Position({ onLat, onLng, onAcc, lat, lng }: PosProps) {
+export default function PositionMarker({
+  onLat,
+  onLng,
+  onAcc,
+  lat,
+  lng,
+}: PosProps) {
   const map = useMap();
 
   const onPositionUpdate = (position: GeolocationPosition) => {

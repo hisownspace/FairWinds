@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "./App.css";
 import {
   Map,
@@ -7,7 +7,8 @@ import {
 } from "@vis.gl/react-google-maps";
 import Geocoding from "./Components/Geocoding/Geocoding";
 import LocationRange from "./Components/LocationRange/LocationRange";
-import Position from "./Components/Position/Position";
+import PositionMarker from "./Components/PositionMarker/PositionMarker";
+import DestinationControl from "./Components/DestinationControl/DestinationControl";
 
 const API_KEY: string = process.env.VITE_GOOGLE_MAPS_API_KEY!;
 const MAP_ID: string = process.env.VITE_GOOGLE_MAPS_MAP_ID!;
@@ -16,6 +17,7 @@ function App() {
   const [lat, setLat] = useState<number>(0);
   const [lng, setLng] = useState<number>(0);
   const [accuracy, setAccuracy] = useState<number>(0);
+  const [address, setAddress] = useState<string | undefined>("");
 
   return (
     <>
@@ -37,7 +39,7 @@ function App() {
               );
             }}
           >
-            <Position
+            <PositionMarker
               onAcc={setAccuracy}
               onLat={setLat}
               onLng={setLng}
@@ -45,7 +47,8 @@ function App() {
               lng={lng}
             />
           </Map>
-          <Geocoding />
+          <DestinationControl onPlaceSelect={setAddress} />
+          <Geocoding address={address} />
           <LocationRange accuracy={accuracy} lat={lat} lng={lng} />
         </div>
       </APIProvider>
