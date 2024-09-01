@@ -189,6 +189,7 @@ class ImportantLocation extends TripLocation {
     this.closestStation = await this.getClosestObservationStation();
     this.currentConditions = await this.getCurrentConditions();
     console.log("Current Conditions:", this.currentConditions);
+    console.log(_);
     this.alerts = await this.getActiveAlerts();
   }
 
