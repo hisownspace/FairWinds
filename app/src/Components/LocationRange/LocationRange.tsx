@@ -37,9 +37,6 @@ export default function LocationRange({ loc }: LocRngProps) {
     if (!circle) return;
 
     circle.setMap(map);
-    return () => {
-      circle.setVisible(false);
-    };
   }, [circle]);
 
   return null;
