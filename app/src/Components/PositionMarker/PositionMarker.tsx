@@ -17,9 +17,17 @@ export default function PositionMarker({ onLocSelected, loc }: PosMarkProps) {
     const lng = position.coords.longitude;
     const accuracy = position.coords.accuracy;
     onLocSelected({ lat, lng, accuracy });
-    if ((!loc.lat || !loc.lng) && map) {
+    if (map) {
       map.setCenter({ lat, lng });
     }
+  };
+
+  const onPositionFind = (position: GeolocationPosition) => {
+    console.log(position.coords);
+    const lat = position.coords.latitude;
+    const lng = position.coords.longitude;
+    const accuracy = position.coords.accuracy;
+    onLocSelected({ lat, lng, accuracy });
   };
 
   const handleGeolocationError = (err: GeolocationPositionError) => {
@@ -39,6 +47,11 @@ export default function PositionMarker({ onLocSelected, loc }: PosMarkProps) {
 
   useEffect(() => {
     if (navigator.geolocation) {
+      navigator.geolocation.watchPosition(
+        onPositionFind,
+        handleGeolocationError,
+        { maximumAge: 5000 },
+      );
       navigator.geolocation.watchPosition(
         onPositionUpdate,
         handleGeolocationError,
