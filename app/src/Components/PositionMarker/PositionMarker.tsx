@@ -54,9 +54,9 @@ export default function PositionMarker({ onLocSelected, loc }: PosMarkProps) {
     map.setCenter({ lat, lng });
   }, [loc]);
 
-  return (
+  return loc.lat && loc.lng ? (
     <AdvancedMarker position={{ lat: loc.lat, lng: loc.lng }}>
       <div className="position" />
     </AdvancedMarker>
-  );
+  ) : null;
 }
