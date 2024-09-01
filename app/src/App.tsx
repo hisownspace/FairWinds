@@ -10,8 +10,8 @@ import LocationRange from "./Components/LocationRange/LocationRange";
 import PositionMarker from "./Components/PositionMarker/PositionMarker";
 import DestinationControl from "./Components/DestinationControl";
 
-const API_KEY: string = process.env.VITE_GOOGLE_MAPS_API_KEY!;
-const MAP_ID: string = process.env.VITE_GOOGLE_MAPS_MAP_ID!;
+const API_KEY: string = import.meta.env.VITE_GOOGLE_MAPS_API_KEY!;
+const MAP_ID: string = import.meta.env.VITE_GOOGLE_MAPS_MAP_ID!;
 
 export interface coords {
   lat: number;
