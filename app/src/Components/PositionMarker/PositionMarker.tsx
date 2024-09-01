@@ -17,6 +17,9 @@ export default function PositionMarker({ onLocSelected, loc }: PosMarkProps) {
     const lng = position.coords.longitude;
     const accuracy = position.coords.accuracy;
     onLocSelected({ lat, lng, accuracy });
+    if ((!loc.lat || !loc.lng) && map) {
+      map.setCenter({ lat, lng });
+    }
   };
 
   const handleGeolocationError = (err: GeolocationPositionError) => {
@@ -44,15 +47,6 @@ export default function PositionMarker({ onLocSelected, loc }: PosMarkProps) {
     }
     console.log(navigator.geolocation);
   }, []);
-
-  useEffect(() => {
-    const lat = loc.lat;
-    const lng = loc.lng;
-
-    if (!map || !lat || !lng) return;
-
-    map.setCenter({ lat, lng });
-  }, [loc]);
 
   return loc.lat && loc.lng ? (
     <AdvancedMarker position={{ lat: loc.lat, lng: loc.lng }}>
