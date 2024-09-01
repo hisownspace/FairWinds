@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import {
   Map,
@@ -22,8 +22,12 @@ export interface coords {
 function App() {
   const [currLoc, setCurrLoc] = useState<coords>({} as coords);
   const [dest, setDest] = useState<coords>({} as coords);
-  const [start, setStart] = useState<coords>();
+  // const [start, setStart] = useState<coords>();
   const [address, setAddress] = useState<string>("");
+
+  useEffect(() => {
+    console.log(dest);
+  }, [dest]);
 
   return (
     <>

@@ -85,6 +85,7 @@ class TripLocation {
     ] = await this.getRequestMetadata();
     this.locationInfo = { city, state, timeZone };
     this.forecast = await this.getForecast();
+    console.log(this.forecast);
     this.alerts = await this.getActiveAlerts();
   }
 
@@ -208,7 +209,7 @@ class ImportantLocation extends TripLocation {
   async getClosestObservationStation(): Promise<any> {
     const res: any = await axios.get(this.observationStations);
     const data: any = res.data;
-    const headers = res.headers;
+    // const headers = res.headers;
     const features: feature[] = data.features;
     const closestStation: string = features[0].id;
     return `${closestStation}/observations`;
@@ -223,8 +224,8 @@ class ImportantLocation extends TripLocation {
 const main = async () => {
   const location = new TripLocation("", 38.8894, -77.0352);
   await location.init();
-  // const startLocation = new ImportantLocation("", 38.8894, -77.0352);
-  // await startLocation.init();
+  const startLocation = new ImportantLocation("", 38.8894, -77.0352);
+  await startLocation.init();
 };
 
 main();
