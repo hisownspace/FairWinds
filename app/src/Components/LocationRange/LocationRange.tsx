@@ -1,5 +1,5 @@
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 
 import { coords } from "../../App";
 
