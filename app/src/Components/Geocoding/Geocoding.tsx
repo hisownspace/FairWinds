@@ -1,7 +1,13 @@
 import { useMapsLibrary, useMap } from "@vis.gl/react-google-maps";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { coords } from "../../App";
 
-export default function Geocoding({ address }: { address: string }) {
+interface GeoProps {
+  address: string;
+  onDestSelect: Dispatch<SetStateAction<coords>>;
+}
+
+export default function Geocoding({ address, onDestSelect }: GeoProps) {
   const map = useMap();
   const geocoding = useMapsLibrary("geocoding");
 
@@ -17,16 +23,12 @@ export default function Geocoding({ address }: { address: string }) {
       if (!geocoderResponse) return;
       setLat(geocoderResponse[0].geometry.location.lat());
       setLng(geocoderResponse[0].geometry.location.lng());
-      // const lat = geocoderResponse[0].geometry.location.lat();
-      // const lng = geocoderResponse[0].geometry.location.lng();
-      // map.setCenter({ lat, lng });
     });
   }, [geocoding, address]);
 
   useEffect(() => {
     if (!map || !lat || !lng) return;
-    map.setCenter({ lat, lng });
-    console.log("center changed!");
+    onDestSelect({ lat, lng, accuracy: NaN });
   }, [lat, lng]);
 
   return null;

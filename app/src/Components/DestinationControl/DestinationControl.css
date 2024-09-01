@@ -1,0 +1,12 @@
+.destination-input {
+  height: 24px;
+  line-height: 24px;
+  font-size: 15px;
+  width: 90%;
+  margin: auto;
+}
+
+.destination-container {
+  width: 100vw;
+  margin-top: 15px;
+}

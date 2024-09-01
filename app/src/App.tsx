@@ -8,16 +8,22 @@ import {
 import Geocoding from "./Components/Geocoding/Geocoding";
 import LocationRange from "./Components/LocationRange/LocationRange";
 import PositionMarker from "./Components/PositionMarker/PositionMarker";
-import DestinationControl from "./Components/DestinationControl/DestinationControl";
+import DestinationControl from "./Components/DestinationControl";
 
 const API_KEY: string = process.env.VITE_GOOGLE_MAPS_API_KEY!;
 const MAP_ID: string = process.env.VITE_GOOGLE_MAPS_MAP_ID!;
 
+export interface coords {
+  lat: number;
+  lng: number;
+  accuracy: number;
+}
+
 function App() {
-  const [lat, setLat] = useState<number>(0);
-  const [lng, setLng] = useState<number>(0);
-  const [accuracy, setAccuracy] = useState<number>(0);
-  const [address, setAddress] = useState<string | undefined>("");
+  const [currLoc, setCurrLoc] = useState<coords>({} as coords);
+  const [dest, setDest] = useState<coords>({} as coords);
+  const [start, setStart] = useState<coords>();
+  const [address, setAddress] = useState<string>("");
 
   return (
     <>
@@ -29,7 +35,9 @@ function App() {
           <Map
             mapId={MAP_ID}
             defaultZoom={16}
-            defaultCenter={{ lat, lng }}
+            defaultCenter={{ lat: 0, lng: 0 }}
+            fullscreenControl={false}
+            mapTypeControl={false}
             onCameraChanged={(e: MapCameraChangedEvent) => {
               console.log(
                 "camera changed:",
@@ -39,17 +47,11 @@ function App() {
               );
             }}
           >
-            <PositionMarker
-              onAcc={setAccuracy}
-              onLat={setLat}
-              onLng={setLng}
-              lat={lat}
-              lng={lng}
-            />
+            <PositionMarker onLocSelected={setCurrLoc} loc={currLoc} />
           </Map>
           <DestinationControl onPlaceSelect={setAddress} />
-          <Geocoding address={address} />
-          <LocationRange accuracy={accuracy} lat={lat} lng={lng} />
+          <Geocoding address={address} onDestSelect={setDest} />
+          <LocationRange loc={currLoc} />
         </div>
       </APIProvider>
     </>

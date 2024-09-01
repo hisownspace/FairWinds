@@ -1,23 +1,24 @@
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import { useEffect, useState } from "react";
 
-export default function LocationRange({
-  accuracy,
-  lat,
-  lng,
-}: {
-  accuracy: number;
-  lat: number;
-  lng: number;
-}) {
+import { coords } from "../../App";
+
+interface LocRngProps {
+  loc: coords;
+}
+
+export default function LocationRange({ loc }: LocRngProps) {
   const [circle, setCircle] = useState<google.maps.Circle>();
 
   const map = useMap();
   const maps = useMapsLibrary("maps");
 
   useEffect(() => {
-    if (!maps) return;
-    console.log(accuracy);
+    const acc = loc.accuracy;
+    const lat = loc.lat;
+    const lng = loc.lng;
+
+    if (!maps || !acc || !lat || !lng) return;
 
     const circ: google.maps.Circle = new maps.Circle({
       strokeColor: "#0041a8",
@@ -27,10 +28,10 @@ export default function LocationRange({
       fillOpacity: 0.1,
       map,
       center: { lat, lng },
-      radius: accuracy,
+      radius: acc,
     });
     setCircle(circ);
-  }, [maps, lat, lng, accuracy]);
+  }, [maps, loc]);
 
   useEffect(() => {
     if (!circle) return;

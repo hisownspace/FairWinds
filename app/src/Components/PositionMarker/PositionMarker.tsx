@@ -1,28 +1,22 @@
 import { useEffect, Dispatch, SetStateAction } from "react";
 import { AdvancedMarker, useMap } from "@vis.gl/react-google-maps";
 
-interface PosProps {
-  onLat: Dispatch<SetStateAction<number>>;
-  onLng: Dispatch<SetStateAction<number>>;
-  onAcc: Dispatch<SetStateAction<number>>;
-  lat: number;
-  lng: number;
+import { coords } from "../../App";
+
+interface PosMarkProps {
+  onLocSelected: Dispatch<SetStateAction<coords>>;
+  loc: coords;
 }
 
-export default function PositionMarker({
-  onLat,
-  onLng,
-  onAcc,
-  lat,
-  lng,
-}: PosProps) {
+export default function PositionMarker({ onLocSelected, loc }: PosMarkProps) {
   const map = useMap();
 
   const onPositionUpdate = (position: GeolocationPosition) => {
     console.log(position.coords);
-    onLat(position.coords.latitude);
-    onLng(position.coords.longitude);
-    onAcc(position.coords.accuracy);
+    const lat = position.coords.latitude;
+    const lng = position.coords.longitude;
+    const accuracy = position.coords.accuracy;
+    onLocSelected({ lat, lng, accuracy });
   };
 
   const handleGeolocationError = (err: GeolocationPositionError) => {
@@ -50,14 +44,18 @@ export default function PositionMarker({
     }
     console.log(navigator.geolocation);
   }, []);
+
   useEffect(() => {
-    if (!map) return;
+    const lat = loc.lat;
+    const lng = loc.lng;
+
+    if (!map || !lat || !lng) return;
 
     map.setCenter({ lat, lng });
-  }, [lat, lng]);
+  }, [loc]);
 
   return (
-    <AdvancedMarker position={{ lat, lng }}>
+    <AdvancedMarker position={{ lat: loc.lat, lng: loc.lng }}>
       <div className="position" />
     </AdvancedMarker>
   );

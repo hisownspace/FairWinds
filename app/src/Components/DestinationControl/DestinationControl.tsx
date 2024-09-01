@@ -28,9 +28,9 @@ export default function DestinationControl({ onPlaceSelect }: DestProps) {
   }, [dest]);
 
   return (
-    <MapControl position={ControlPosition.TOP}>
+    <MapControl position={ControlPosition.BLOCK_START_INLINE_START}>
       <div className="destination-container">
-        <input ref={inputRef} />
+        <input className="destination-input" ref={inputRef} />
       </div>
     </MapControl>
   );
