@@ -52,7 +52,7 @@ export default function PositionMarker({ onLocSelected, loc }: PosMarkProps) {
         handleGeolocationError,
         { maximumAge: 5000 },
       );
-      navigator.geolocation.watchPosition(
+      navigator.geolocation.getCurrentPosition(
         onPositionUpdate,
         handleGeolocationError,
         { maximumAge: 5000 },
