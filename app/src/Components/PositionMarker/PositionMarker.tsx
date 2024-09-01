@@ -36,7 +36,7 @@ export default function PositionMarker({ onLocSelected, loc }: PosMarkProps) {
 
   useEffect(() => {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
+      navigator.geolocation.watchPosition(
         onPositionUpdate,
         handleGeolocationError,
         { maximumAge: 5000 },
