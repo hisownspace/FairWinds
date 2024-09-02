@@ -20,19 +20,21 @@ export default function LocationRange({ loc }: LocRngProps) {
 
     if (!maps || !lat || !lng || !acc) return;
 
-    const circ = new maps.Circle({
-      strokeColor: "#0041a8",
-      strokeOpacity: 0.4,
-      strokeWeight: 1,
-      fillColor: "#0041a8",
-      fillOpacity: 0.1,
-      map,
-      center: { lat: loc.lat, lng: loc.lng },
-      radius: loc.accuracy,
-    });
-    console.log("in effect!!!!!");
-    circ.setMap(map);
-    circle.current = circ;
+    if (!circle.current) {
+      const circ = new maps.Circle({
+        strokeColor: "#0041a8",
+        strokeOpacity: 0.4,
+        strokeWeight: 1,
+        fillColor: "#0041a8",
+        fillOpacity: 0.1,
+        map,
+        center: { lat: loc.lat, lng: loc.lng },
+        radius: loc.accuracy,
+      });
+      console.log("in effect!!!!!");
+      circ.setMap(map);
+      circle.current = circ;
+    }
   }, [loc, maps]);
 
   useEffect(() => {
