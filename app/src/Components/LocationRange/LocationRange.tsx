@@ -50,7 +50,12 @@ export default function LocationRange({ loc }: LocRngProps) {
     // circle.setMap(map);
     // circle.setCenter({ lat, lng });
     // circle.setRadius(acc);
-  }, [maps, loc]);
+    return () => {
+      if (!circle.current) return;
+      console.log("in cleanup function");
+      circle.current.setVisible(false);
+    };
+  }, []);
 
   useEffect(() => {
     const acc = loc.accuracy;
@@ -63,11 +68,6 @@ export default function LocationRange({ loc }: LocRngProps) {
 
     circle.current.setRadius(acc);
     circle.current.setCenter({ lat, lng });
-    return () => {
-      if (!circle.current) return;
-      console.log("in cleanup function");
-      circle.current.setVisible(false);
-    };
   }, [circle, loc]);
 
   return null;
