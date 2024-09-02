@@ -7,18 +7,19 @@ interface PosMarkProps {
   onLocSelected: Dispatch<SetStateAction<coords>>;
   loc: coords;
   tracking: boolean;
+  onTracking: Dispatch<SetStateAction<boolean>>;
 }
 
 export default function PositionMarker({
   onLocSelected,
   loc,
   tracking,
+  onTracking,
 }: PosMarkProps) {
   const [watchId, setWatchId] = useState<number>(0);
   const map = useMap();
 
   const onPositionUpdate = (position: GeolocationPosition) => {
-    console.log(position.coords);
     const lat = position.coords.latitude;
     const lng = position.coords.longitude;
     const heading = position.coords.heading;
@@ -45,21 +46,18 @@ export default function PositionMarker({
   useEffect(() => {
     console.log("In geolocation effect");
     if (navigator.geolocation) {
-      if (!watchId) {
-        setWatchId(
-          navigator.geolocation.watchPosition(
-            onPositionUpdate,
-            handleGeolocationError,
-            { maximumAge: 5000 },
-          ),
-        );
-      } else {
-        navigator.geolocation.getCurrentPosition(
+      navigator.geolocation.getCurrentPosition(
+        onPositionUpdate,
+        handleGeolocationError,
+        { maximumAge: 5000 },
+      );
+      setWatchId(
+        navigator.geolocation.watchPosition(
           onPositionUpdate,
           handleGeolocationError,
           { maximumAge: 5000 },
-        );
-      }
+        ),
+      );
     }
     return () => {
       navigator.geolocation.clearWatch(watchId);
@@ -67,15 +65,16 @@ export default function PositionMarker({
   }, []);
 
   useEffect(() => {
-    // console.log("in setCenter effect!");
     const lat = loc.lat;
     const lng = loc.lng;
-    // console.log("lat", lat);
-    // console.log("lng", lng);
-    // console.log("map", map);
-    // console.log("tracking", tracking);
+
     if (!lat || !lng || !map || !tracking) return;
+
     map.setCenter({ lat, lng });
+    map.addListener("drag", () => {
+      onTracking(false);
+      console.log("no longer tracking position!");
+    });
   }, [tracking, map, loc]);
 
   return loc.lat && loc.lng ? (

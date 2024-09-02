@@ -58,6 +58,7 @@ function App() {
               onLocSelected={setCurrLoc}
               loc={currLoc}
               tracking={tracking}
+              onTracking={setTracking}
             />
           </Map>
           <DestinationControl onPlaceSelect={setAddress} />
