@@ -16,6 +16,7 @@ const MAP_ID: string = import.meta.env.VITE_GOOGLE_MAPS_MAP_ID!;
 export interface coords {
   lat: number;
   lng: number;
+  heading: number | null;
   accuracy: number;
 }
 
@@ -24,10 +25,12 @@ function App() {
   const [dest, setDest] = useState<coords>({} as coords);
   // const [start, setStart] = useState<coords>();
   const [address, setAddress] = useState<string>("");
+  const [tracking, setTracking] = useState(true);
 
   useEffect(() => {
     console.log(dest);
-  }, [dest]);
+    setTracking(true);
+  }, [dest, setTracking]);
 
   return (
     <>
@@ -51,7 +54,11 @@ function App() {
               );
             }}
           >
-            <PositionMarker onLocSelected={setCurrLoc} loc={currLoc} />
+            <PositionMarker
+              onLocSelected={setCurrLoc}
+              loc={currLoc}
+              tracking={tracking}
+            />
           </Map>
           <DestinationControl onPlaceSelect={setAddress} />
           <Geocoding address={address} onDestSelect={setDest} />

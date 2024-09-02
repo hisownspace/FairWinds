@@ -1,0 +1,9 @@
+.position {
+  z-index: 5;
+  background-color: #0041a8;
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+  border: 2px solid white;
+  transform: translateY(50%);
+}

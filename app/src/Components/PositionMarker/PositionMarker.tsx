@@ -1,4 +1,4 @@
-import { useEffect, Dispatch, SetStateAction } from "react";
+import { useEffect, Dispatch, SetStateAction, useState } from "react";
 import { AdvancedMarker, useMap } from "@vis.gl/react-google-maps";
 
 import { coords } from "../../App";
@@ -6,17 +6,24 @@ import { coords } from "../../App";
 interface PosMarkProps {
   onLocSelected: Dispatch<SetStateAction<coords>>;
   loc: coords;
+  tracking: boolean;
 }
 
-export default function PositionMarker({ onLocSelected, loc }: PosMarkProps) {
+export default function PositionMarker({
+  onLocSelected,
+  loc,
+  tracking,
+}: PosMarkProps) {
+  const [watchId, setWatchId] = useState<number>(0);
   const map = useMap();
 
   const onPositionUpdate = (position: GeolocationPosition) => {
     console.log(position.coords);
     const lat = position.coords.latitude;
     const lng = position.coords.longitude;
+    const heading = position.coords.heading;
     const accuracy = position.coords.accuracy;
-    onLocSelected({ lat, lng, accuracy });
+    onLocSelected({ lat, lng, heading, accuracy });
     if (map) {
       map.setCenter({ lat, lng });
     }
@@ -26,8 +33,9 @@ export default function PositionMarker({ onLocSelected, loc }: PosMarkProps) {
     console.log(position.coords);
     const lat = position.coords.latitude;
     const lng = position.coords.longitude;
+    const heading = position.coords.heading;
     const accuracy = position.coords.accuracy;
-    onLocSelected({ lat, lng, accuracy });
+    onLocSelected({ lat, lng, heading, accuracy });
   };
 
   const handleGeolocationError = (err: GeolocationPositionError) => {
@@ -47,19 +55,26 @@ export default function PositionMarker({ onLocSelected, loc }: PosMarkProps) {
 
   useEffect(() => {
     if (navigator.geolocation) {
-      navigator.geolocation.watchPosition(
-        onPositionFind,
-        handleGeolocationError,
-        { maximumAge: 5000 },
-      );
-      navigator.geolocation.getCurrentPosition(
-        onPositionUpdate,
-        handleGeolocationError,
-        { maximumAge: 5000 },
-      );
+      if (tracking) {
+        setWatchId(
+          navigator.geolocation.watchPosition(
+            onPositionFind,
+            handleGeolocationError,
+            { maximumAge: 5000 },
+          ),
+        );
+      } else {
+        navigator.geolocation.getCurrentPosition(
+          onPositionUpdate,
+          handleGeolocationError,
+          { maximumAge: 5000 },
+        );
+      }
     }
-    console.log(navigator.geolocation);
-  }, []);
+    return () => {
+      navigator.geolocation.clearWatch(watchId);
+    };
+  }, [tracking]);
 
   return loc.lat && loc.lng ? (
     <AdvancedMarker position={{ lat: loc.lat, lng: loc.lng }}>

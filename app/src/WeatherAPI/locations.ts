@@ -45,7 +45,7 @@ interface forecast {
   detailedForecast: string;
 }
 
-class TripLocation {
+export class TripLocation {
   public longitude: number;
   public latitude: number;
   public address: string;
@@ -177,7 +177,7 @@ class TripLocation {
   }
 }
 
-class ImportantLocation extends TripLocation {
+export class ImportantLocation extends TripLocation {
   private closestStation: string = "";
   private currentConditions: any;
 
@@ -223,10 +223,10 @@ class ImportantLocation extends TripLocation {
 }
 
 const main = async () => {
-  const location = new TripLocation("", 38.8894, -77.0352);
-  await location.init();
-  const startLocation = new ImportantLocation("", 38.8894, -77.0352);
-  await startLocation.init();
+  // const location = new TripLocation("", 38.8894, -77.0352);
+  // await location.init();
+  // const startLocation = new ImportantLocation("", 38.8894, -77.0352);
+  // await startLocation.init();
 };
 
 main();

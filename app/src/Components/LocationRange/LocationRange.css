@@ -1,0 +1,5 @@
+.position-confidence {
+  background-color: rgba(0, 65, 168, 0.36);
+  border-radius: 50%;
+  transform: translate(50%, 100%);
+}
