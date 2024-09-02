@@ -56,16 +56,18 @@ export default function PositionMarker({
   useEffect(() => {
     if (navigator.geolocation) {
       if (tracking) {
+        console.log("HELLO!!!");
         setWatchId(
           navigator.geolocation.watchPosition(
-            onPositionFind,
+            onPositionUpdate,
             handleGeolocationError,
             { maximumAge: 5000 },
           ),
         );
       } else {
+        console.log("in get conditional");
         navigator.geolocation.getCurrentPosition(
-          onPositionUpdate,
+          onPositionFind,
           handleGeolocationError,
           { maximumAge: 5000 },
         );
