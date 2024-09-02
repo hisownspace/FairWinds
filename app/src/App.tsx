@@ -5,9 +5,9 @@ import {
   APIProvider,
   MapCameraChangedEvent,
 } from "@vis.gl/react-google-maps";
-import Geocoding from "./Components/Geocoding/Geocoding";
-import LocationRange from "./Components/LocationRange/LocationRange";
-import PositionMarker from "./Components/PositionMarker/PositionMarker";
+import Geocoding from "./Components/Geocoding";
+import LocationRange from "./Components/LocationRange";
+import PositionMarker from "./Components/PositionMarker";
 import DestinationControl from "./Components/DestinationControl";
 
 const API_KEY: string = import.meta.env.VITE_GOOGLE_MAPS_API_KEY!;
