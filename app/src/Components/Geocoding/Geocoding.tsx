@@ -28,7 +28,7 @@ export default function Geocoding({ address, onDestSelect }: GeoProps) {
 
   useEffect(() => {
     if (!map || !lat || !lng) return;
-    onDestSelect({ lat, lng, accuracy: NaN });
+    onDestSelect({ lat, lng, accuracy: NaN, heading: NaN });
   }, [lat, lng]);
 
   return null;
