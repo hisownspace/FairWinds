@@ -23,18 +23,7 @@ export default function PositionMarker({
     const lng = position.coords.longitude;
     const heading = position.coords.heading;
     const accuracy = position.coords.accuracy;
-    onLocSelected({ lat, lng, heading, accuracy });
-    if (map) {
-      map.setCenter({ lat, lng });
-    }
-  };
-
-  const onPositionFind = (position: GeolocationPosition) => {
-    console.log(position.coords);
-    const lat = position.coords.latitude;
-    const lng = position.coords.longitude;
-    const heading = position.coords.heading;
-    const accuracy = position.coords.accuracy;
+    // console.log(lat, lng, heading, accuracy);
     onLocSelected({ lat, lng, heading, accuracy });
   };
 
@@ -54,9 +43,9 @@ export default function PositionMarker({
   };
 
   useEffect(() => {
+    console.log("In geolocation effect");
     if (navigator.geolocation) {
-      if (tracking) {
-        console.log("HELLO!!!");
+      if (!watchId) {
         setWatchId(
           navigator.geolocation.watchPosition(
             onPositionUpdate,
@@ -65,9 +54,8 @@ export default function PositionMarker({
           ),
         );
       } else {
-        console.log("in get conditional");
         navigator.geolocation.getCurrentPosition(
-          onPositionFind,
+          onPositionUpdate,
           handleGeolocationError,
           { maximumAge: 5000 },
         );
@@ -76,7 +64,19 @@ export default function PositionMarker({
     return () => {
       navigator.geolocation.clearWatch(watchId);
     };
-  }, [tracking]);
+  }, []);
+
+  useEffect(() => {
+    // console.log("in setCenter effect!");
+    const lat = loc.lat;
+    const lng = loc.lng;
+    // console.log("lat", lat);
+    // console.log("lng", lng);
+    // console.log("map", map);
+    // console.log("tracking", tracking);
+    if (!lat || !lng || !map || !tracking) return;
+    map.setCenter({ lat, lng });
+  }, [tracking, map, loc]);
 
   return loc.lat && loc.lng ? (
     <AdvancedMarker position={{ lat: loc.lat, lng: loc.lng }}>

@@ -1,5 +1,5 @@
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
-import { useEffect, useMemo } from "react";
+import { useEffect, useRef } from "react";
 
 import { coords } from "../../App";
 
@@ -11,13 +11,14 @@ export default function LocationRange({ loc }: LocRngProps) {
   // const [circle, setCircle] = useState<google.maps.Circle>();
   const map = useMap();
   const maps = useMapsLibrary("maps");
+  const circle = useRef<google.maps.Circle | null>(null);
 
-  const circle = useMemo(() => {
+  useEffect(() => {
     const acc = loc.accuracy;
     const lat = loc.lat;
     const lng = loc.lng;
 
-    if (!maps || !lat || !lng || !acc) return null;
+    if (!maps || !lat || !lng || !acc) return;
 
     const circ = new maps.Circle({
       strokeColor: "#0041a8",
@@ -29,22 +30,43 @@ export default function LocationRange({ loc }: LocRngProps) {
       center: { lat: loc.lat, lng: loc.lng },
       radius: loc.accuracy,
     });
+    console.log("in effect!!!!!");
     circ.setMap(map);
-    return circ;
+    circle.current = circ;
   }, [loc, maps]);
+
+  useEffect(() => {
+    // const circ: google.maps.Circle = new maps.Circle({
+    //   strokeColor: "#0041a8",
+    //   strokeOpacity: 0.4,
+    //   strokeWeight: 1,
+    //   fillColor: "#0041a8",
+    //   fillOpacity: 0.1,
+    //   map,
+    //   center: { lat, lng },
+    //   radius: acc,
+    // });
+    // setCircle(circ);
+    // circle.setMap(map);
+    // circle.setCenter({ lat, lng });
+    // circle.setRadius(acc);
+  }, [maps, loc]);
 
   useEffect(() => {
     const acc = loc.accuracy;
     const lat = loc.lat;
     const lng = loc.lng;
+    console.log(circle);
 
-    if (!acc || !lat || !lng || !circle) return;
+    if (!acc || !lat || !lng || !circle.current) return;
     console.log(lat, lng);
 
-    circle.setRadius(acc);
-    circle.setCenter({ lat, lng });
+    circle.current.setRadius(acc);
+    circle.current.setCenter({ lat, lng });
     return () => {
-      circle.setVisible(false);
+      if (!circle.current) return;
+      console.log("in cleanup function");
+      circle.current.setVisible(false);
     };
   }, [circle, loc]);
 
