@@ -9,6 +9,7 @@ import Geocoding from "./Components/Geocoding";
 import LocationRange from "./Components/LocationRange";
 import PositionMarker from "./Components/PositionMarker";
 import DestinationControl from "./Components/DestinationControl";
+import CenterControl from "./Components/CenterControl";
 
 const API_KEY: string = import.meta.env.VITE_GOOGLE_MAPS_API_KEY!;
 const MAP_ID: string = import.meta.env.VITE_GOOGLE_MAPS_MAP_ID!;
@@ -62,6 +63,7 @@ function App() {
             />
           </Map>
           <DestinationControl onPlaceSelect={setAddress} />
+          <CenterControl onTrackingSet={setTracking} />
           <Geocoding address={address} onDestSelect={setDest} />
           <LocationRange loc={currLoc} />
         </div>
