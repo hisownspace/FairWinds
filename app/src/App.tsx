@@ -10,6 +10,7 @@ import LocationRange from "./Components/LocationRange";
 import PositionMarker from "./Components/PositionMarker";
 import DestinationControl from "./Components/DestinationControl";
 import CenterControl from "./Components/CenterControl";
+import Navigation from "./Components/Navigation";
 
 const API_KEY: string = import.meta.env.VITE_GOOGLE_MAPS_API_KEY!;
 const MAP_ID: string = import.meta.env.VITE_GOOGLE_MAPS_MAP_ID!;
@@ -24,14 +25,14 @@ export interface coords {
 function App() {
   const [currLoc, setCurrLoc] = useState<coords>({} as coords);
   const [dest, setDest] = useState<coords>({} as coords);
-  // const [start, setStart] = useState<coords>();
+  const [start, setStart] = useState<coords>();
   const [address, setAddress] = useState<string>("");
   const [tracking, setTracking] = useState(true);
 
   useEffect(() => {
-    console.log(dest);
-    setTracking(true);
-  }, [dest, setTracking]);
+    if (!dest || !currLoc) return;
+    setStart(currLoc);
+  }, [start, dest]);
 
   return (
     <>
@@ -66,6 +67,7 @@ function App() {
           <CenterControl onTrackingSet={setTracking} tracking={tracking} />
           <Geocoding address={address} onDestSelect={setDest} />
           <LocationRange loc={currLoc} />
+          <Navigation start={start} dest={dest} setTracking={setTracking} />
         </div>
       </APIProvider>
     </>
