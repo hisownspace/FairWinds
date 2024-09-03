@@ -1,2 +1,9 @@
 .center-button {
+  color: blue;
+  font-size: 25px;
+  margin-right: 10px;
+  border: none;
+  padding: 10px;
+  background-color: white;
+  border-radius: 50%;
 }

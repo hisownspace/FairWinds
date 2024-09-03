@@ -70,7 +70,7 @@ export default function PositionMarker({
 
     if (!lat || !lng || !map || !tracking) return;
 
-    map.setCenter({ lat, lng });
+    map.panTo({ lat, lng });
     map.addListener("drag", () => {
       onTracking(false);
       console.log("no longer tracking position!");

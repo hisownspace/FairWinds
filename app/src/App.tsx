@@ -63,7 +63,7 @@ function App() {
             />
           </Map>
           <DestinationControl onPlaceSelect={setAddress} />
-          <CenterControl onTrackingSet={setTracking} />
+          <CenterControl onTrackingSet={setTracking} tracking={tracking} />
           <Geocoding address={address} onDestSelect={setDest} />
           <LocationRange loc={currLoc} />
         </div>
