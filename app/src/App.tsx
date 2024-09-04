@@ -11,6 +11,7 @@ import PositionMarker from "./Components/PositionMarker";
 import DestinationControl from "./Components/DestinationControl";
 import CenterControl from "./Components/CenterControl";
 import Navigation from "./Components/Navigation";
+import DestinationMarker from "./Components/DestinationMarker";
 
 const API_KEY: string = import.meta.env.VITE_GOOGLE_MAPS_API_KEY!;
 const MAP_ID: string = import.meta.env.VITE_GOOGLE_MAPS_MAP_ID!;
@@ -62,6 +63,7 @@ function App() {
               tracking={tracking}
               onTracking={setTracking}
             />
+            <DestinationMarker dest={dest} />
           </Map>
           <DestinationControl onPlaceSelect={setAddress} />
           <CenterControl onTrackingSet={setTracking} tracking={tracking} />
