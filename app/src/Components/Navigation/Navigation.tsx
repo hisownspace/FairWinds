@@ -8,10 +8,18 @@ import { API_KEY } from "../../App";
 interface NavProps {
   start: coords | undefined;
   dest: coords | undefined;
-  setTracking: Dispatch<SetStateAction<boolean>>;
+  onTracking: Dispatch<SetStateAction<boolean>>;
+  onShowStartTripButton: Dispatch<SetStateAction<boolean>>;
+  startTrip: boolean;
 }
 
-export default function Navigation({ start, dest, setTracking }: NavProps) {
+export default function Navigation({
+  start,
+  dest,
+  onTracking,
+  onShowStartTripButton,
+  startTrip,
+}: NavProps) {
   // const [bounds, setBounds] = useState<google.maps.LatLngBounds>();
   const polylineRef = useRef<google.maps.Polyline | null>(null);
   const [routeSections, setRouteSections] = useState<google.maps.LatLng[]>();
@@ -76,12 +84,14 @@ export default function Navigation({ start, dest, setTracking }: NavProps) {
 
     if (!map || startIsEmpty || destIsEmpty) return;
 
+    onShowStartTripButton(true);
+
     const latLngBndsLit = getBounds(start, dest);
     getRoute(start, dest);
     console.log(latLngBndsLit);
 
     map?.fitBounds(latLngBndsLit, 15);
-    setTracking(false);
+    onTracking(false);
   }, [start, dest, maps]);
 
   useEffect(() => {
@@ -96,6 +106,23 @@ export default function Navigation({ start, dest, setTracking }: NavProps) {
       polylineRef.current?.setVisible(false);
     };
   }, [routeSections, maps, map]);
+
+  useEffect(() => {
+    if (!start) return;
+    const startIsEmpty = Object.values(start).every((x) => !x);
+    if (!startTrip || startIsEmpty || !map) return;
+    onTracking(true);
+    if (start.heading) {
+      console.log("heading!!!!");
+      map.setHeading(start.heading);
+    } else {
+      const heading = Math.floor(Math.random() * 360);
+      console.log("no heading!!!!!\n Random heading:", heading);
+      map.setHeading(heading);
+    }
+    map.setZoom(17);
+    map.setTilt(45);
+  }, [startTrip, start]);
 
   return null;
 }

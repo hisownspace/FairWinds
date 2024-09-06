@@ -12,6 +12,7 @@ import DestinationControl from "./Components/DestinationControl";
 import CenterControl from "./Components/CenterControl";
 import Navigation from "./Components/Navigation";
 import DestinationMarker from "./Components/DestinationMarker";
+import StartTripControl from "./Components/StartTripControl";
 
 export const API_KEY: string = import.meta.env.VITE_GOOGLE_MAPS_API_KEY!;
 const MAP_ID: string = import.meta.env.VITE_GOOGLE_MAPS_MAP_ID!;
@@ -29,6 +30,9 @@ function App() {
   const [start, setStart] = useState<coords>();
   const [address, setAddress] = useState<string>("");
   const [tracking, setTracking] = useState(true);
+  const [showStartTripButton, setShowStartTripButton] =
+    useState<boolean>(false);
+  const [onTrip, setOnTrip] = useState<boolean>(false);
 
   useEffect(() => {
     if (!dest || !currLoc) return;
@@ -67,9 +71,20 @@ function App() {
           </Map>
           <DestinationControl onPlaceSelect={setAddress} />
           <CenterControl onTrackingSet={setTracking} tracking={tracking} />
+          <StartTripControl
+            showStartTripButton={showStartTripButton}
+            onStartTrip={setOnTrip}
+            tracking={tracking}
+          />
           <Geocoding address={address} onDestSelect={setDest} />
           <LocationRange loc={currLoc} />
-          <Navigation start={start} dest={dest} setTracking={setTracking} />
+          <Navigation
+            start={start}
+            dest={dest}
+            onTracking={setTracking}
+            onShowStartTripButton={setShowStartTripButton}
+            startTrip={onTrip}
+          />
         </div>
       </APIProvider>
     </>

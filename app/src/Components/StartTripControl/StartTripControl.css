@@ -1,0 +1,9 @@
+.start-trip-container {
+  margin: 10px;
+  padding: 5px;
+}
+.start-trip-button {
+  padding: 5px 10px;
+  color: blue;
+  font-size: 35px;
+}
