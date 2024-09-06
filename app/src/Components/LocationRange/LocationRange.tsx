@@ -66,7 +66,6 @@ export default function LocationRange({ loc }: LocRngProps) {
     console.log(circle);
 
     if (!acc || !lat || !lng || !circle.current) return;
-    console.log(lat, lng);
 
     circle.current.setRadius(acc);
     circle.current.setCenter({ lat, lng });

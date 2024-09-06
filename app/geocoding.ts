@@ -5,5 +5,3 @@ const geocoder = new useMapsLibrary("geocoding").Geocoder();
 const newGeo = geocoder.geocode(
   "2305 Montebello Terrace, Baltimore, MD, 22714",
 );
-
-console.log(newGeo);

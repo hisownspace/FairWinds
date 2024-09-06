@@ -20,6 +20,9 @@ export default function PositionMarker({
   const map = useMap();
 
   const onPositionUpdate = (position: GeolocationPosition) => {
+    console.log("in position update handler");
+    console.log(position);
+    console.log(position.coords);
     const lat = position.coords.latitude;
     const lng = position.coords.longitude;
     const heading = position.coords.heading;
