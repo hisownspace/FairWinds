@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import {
-  Map,
-  APIProvider,
-  MapCameraChangedEvent,
-} from "@vis.gl/react-google-maps";
+import { Map, APIProvider } from "@vis.gl/react-google-maps";
 import Geocoding from "./Components/Geocoding";
 import LocationRange from "./Components/LocationRange";
 import PositionMarker from "./Components/PositionMarker";
