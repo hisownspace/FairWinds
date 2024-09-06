@@ -6,7 +6,7 @@ import { Dispatch } from "react";
 
 interface StartTripCtrlProps {
   showStartTripButton: boolean;
-  onStartTrip: Dispatch<SetStateAction>;
+  onStartTrip: Dispatch<SetStateAction<boolean>>;
   tracking: boolean;
 }
 
@@ -14,7 +14,7 @@ export default function StartTripControl({
   showStartTripButton,
   onStartTrip,
   tracking,
-}) {
+}: StartTripCtrlProps) {
   return showStartTripButton && !tracking ? (
     <MapControl position={ControlPosition.LEFT_BOTTOM}>
       <div className="start-trip-container">
