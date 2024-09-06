@@ -112,6 +112,7 @@ export default function Navigation({
     const startIsEmpty = Object.values(start).every((x) => !x);
     if (!startTrip || startIsEmpty || !map) return;
     onTracking(true);
+    console.log("START:", start);
     if (start.heading) {
       console.log("heading!!!!");
       map.setHeading(start.heading);
