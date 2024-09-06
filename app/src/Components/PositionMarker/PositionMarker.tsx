@@ -31,8 +31,8 @@ export default function PositionMarker({
     onLocSelected({ lat, lng, heading, accuracy });
   };
 
-  const handleOrientation = (e: Event) => {
-    console.log(e);
+  const handleOrientation = (e: DeviceOrientationEvent) => {
+    onLocSelected({ ...loc, heading: e.alpha });
   }
 
   const handleGeolocationError = (err: GeolocationPositionError) => {
