@@ -31,9 +31,9 @@ export default function PositionMarker({
     onLocSelected({ lat, lng, heading, accuracy });
   };
 
-  const handleOrientation = (e: DeviceOrientationEvent) => {
-    onLocSelected({ ...loc, heading: e.alpha });
-  }
+  // const handleOrientation = (e: DeviceOrientationEvent) => {
+  //   onLocSelected({ ...loc, heading: e.alpha });
+  // }
 
   const handleGeolocationError = (err: GeolocationPositionError) => {
     const { code }: { code: number } = err;
@@ -63,7 +63,7 @@ export default function PositionMarker({
           handleGeolocationError,
         ),
       );
-    window.addEventListener("deviceorientation", handleOrientation, true);
+    // window.addEventListener("deviceorientation", handleOrientation, true);
     }
     return () => {
       navigator.geolocation.clearWatch(watchId);
