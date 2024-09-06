@@ -52,14 +52,6 @@ function App() {
             defaultCenter={{ lat: 0, lng: 0 }}
             fullscreenControl={false}
             mapTypeControl={false}
-            onCameraChanged={(e: MapCameraChangedEvent) => {
-              console.log(
-                "camera changed:",
-                e.detail.center,
-                "zoom:",
-                e.detail.zoom,
-              );
-            }}
           >
             <PositionMarker
               onLocSelected={setCurrLoc}
