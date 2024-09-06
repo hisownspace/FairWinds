@@ -31,6 +31,10 @@ export default function PositionMarker({
     onLocSelected({ lat, lng, heading, accuracy });
   };
 
+  const handleOrientation = (e: Event) => {
+    console.log(e);
+  }
+
   const handleGeolocationError = (err: GeolocationPositionError) => {
     const { code }: { code: number } = err;
     switch (code) {
@@ -59,6 +63,7 @@ export default function PositionMarker({
           handleGeolocationError,
         ),
       );
+    window.addEventListener("deviceorientation", handleOrientation, true);
     }
     return () => {
       navigator.geolocation.clearWatch(watchId);
