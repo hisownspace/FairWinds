@@ -32,6 +32,7 @@ function App() {
 
   useEffect(() => {
     if (!dest || !currLoc) return;
+    console.log(start);
     setStart(currLoc);
   }, [start, dest]);
 
