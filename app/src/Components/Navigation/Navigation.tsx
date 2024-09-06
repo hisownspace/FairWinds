@@ -1,4 +1,4 @@
-import { useEffect, useState, Dispatch, SetStateAction } from "react";
+import { useEffect, useState, useRef, Dispatch, SetStateAction } from "react";
 
 import { coords } from "../../App";
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
@@ -13,6 +13,7 @@ interface NavProps {
 
 export default function Navigation({ start, dest, setTracking }: NavProps) {
   // const [bounds, setBounds] = useState<google.maps.LatLngBounds>();
+  const polylineRef = useRef<google.maps.Polyline | null>(null);
   const [routeSections, setRouteSections] = useState<google.maps.LatLng[]>();
 
   const map = useMap();
@@ -67,10 +68,14 @@ export default function Navigation({ start, dest, setTracking }: NavProps) {
   useEffect(() => {
     console.log("in navigation effect");
     console.log(map, start, dest);
+
     if (!start || !dest || !geometry) return;
+
     const startIsEmpty = Object.values(start).every((x) => !x);
     const destIsEmpty = Object.values(dest).every((x) => !x);
+
     if (!map || startIsEmpty || destIsEmpty) return;
+
     const latLngBndsLit = getBounds(start, dest);
     getRoute(start, dest);
     console.log(latLngBndsLit);
@@ -80,14 +85,17 @@ export default function Navigation({ start, dest, setTracking }: NavProps) {
   }, [start, dest, maps]);
 
   useEffect(() => {
-    if (!maps || !routeSections) return;
-    const polyline = new maps.Polyline({
+    if (!maps || !routeSections || !map) return;
+    polylineRef.current = new maps.Polyline({
       path: routeSections,
       strokeColor: "blue",
-      strokeWeight: 8,
+      strokeWeight: 10,
     });
-    polyline.setMap(map);
-  }, [routeSections, maps]);
+    polylineRef.current.setMap(map);
+    return () => {
+      polylineRef.current?.setVisible(false);
+    };
+  }, [routeSections, maps, map]);
 
   return null;
 }

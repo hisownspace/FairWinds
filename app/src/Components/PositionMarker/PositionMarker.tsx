@@ -44,18 +44,16 @@ export default function PositionMarker({
   };
 
   useEffect(() => {
-    console.log("In geolocation effect");
     if (navigator.geolocation) {
+      console.log("In geolocation effect");
       navigator.geolocation.getCurrentPosition(
         onPositionUpdate,
         handleGeolocationError,
-        { maximumAge: 5000 },
       );
       setWatchId(
         navigator.geolocation.watchPosition(
           onPositionUpdate,
           handleGeolocationError,
-          { maximumAge: 5000 },
         ),
       );
     }
