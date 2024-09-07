@@ -25,6 +25,7 @@ function App() {
   const [dest, setDest] = useState<coords>({} as coords);
   const [start, setStart] = useState<coords>();
   const [address, setAddress] = useState<string>("");
+  const [heading, setHeading] = useState<number>(NaN);
   const [tracking, setTracking] = useState(true);
   const [showStartTripButton, setShowStartTripButton] =
     useState<boolean>(false);
@@ -67,6 +68,7 @@ function App() {
               loc={currLoc}
               tracking={tracking}
               onTracking={setTracking}
+              onHeadingChange={setHeading}
             />
             <DestinationMarker dest={dest} />
           </Map>
@@ -85,6 +87,7 @@ function App() {
             onTracking={setTracking}
             onShowStartTripButton={setShowStartTripButton}
             startTrip={onTrip}
+            camHeading={heading}
           />
         </div>
       </APIProvider>

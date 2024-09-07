@@ -8,6 +8,7 @@ interface PosMarkProps {
   loc: coords;
   tracking: boolean;
   onTracking: Dispatch<SetStateAction<boolean>>;
+  onHeadingChange: Dispatch<SetStateAction<number>>;
 }
 
 export default function PositionMarker({
@@ -15,6 +16,7 @@ export default function PositionMarker({
   loc,
   tracking,
   onTracking,
+  onHeadingChange,
 }: PosMarkProps) {
   const [watchId, setWatchId] = useState<number>(0);
   const map = useMap();
@@ -32,7 +34,8 @@ export default function PositionMarker({
   };
 
   const handleOrientation = (e: DeviceOrientationEvent) => {
-    onLocSelected({ ...loc, heading: e.alpha });
+    if (!e.alpha) return;
+    onHeadingChange(e.alpha);
   };
 
   const handleGeolocationError = (err: GeolocationPositionError) => {

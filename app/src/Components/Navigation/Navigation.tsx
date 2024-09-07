@@ -11,6 +11,7 @@ interface NavProps {
   onTracking: Dispatch<SetStateAction<boolean>>;
   onShowStartTripButton: Dispatch<SetStateAction<boolean>>;
   startTrip: boolean;
+  camHeading: number;
 }
 
 export default function Navigation({
@@ -19,6 +20,7 @@ export default function Navigation({
   onTracking,
   onShowStartTripButton,
   startTrip,
+  camHeading,
 }: NavProps) {
   // const [bounds, setBounds] = useState<google.maps.LatLngBounds>();
   const polylineRef = useRef<google.maps.Polyline | null>(null);
@@ -114,8 +116,8 @@ export default function Navigation({
     onTracking(true);
     console.log(":", start);
     if (start.heading) {
-      console.log("heading:", start.heading);
-      map.setHeading(start.heading);
+      console.log("heading:", camHeading);
+      map.setHeading(camHeading);
     } else {
       const heading = Math.floor(Math.random() * 360);
       console.log("no heading!!!!!\n Random heading:", heading);
