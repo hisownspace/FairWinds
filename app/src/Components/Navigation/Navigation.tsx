@@ -9,6 +9,7 @@ interface NavProps {
   start: coords | undefined;
   dest: coords | undefined;
   onTracking: Dispatch<SetStateAction<boolean>>;
+  tracking: boolean;
   onShowStartTripButton: Dispatch<SetStateAction<boolean>>;
   startTrip: boolean;
   camHeading: number;
@@ -19,6 +20,7 @@ interface NavProps {
 export default function Navigation({
   start,
   dest,
+  tracking,
   onTracking,
   onShowStartTripButton,
   startTrip,
@@ -95,7 +97,7 @@ export default function Navigation({
     const startIsEmpty = Object.values(start).every((x) => !x);
     const destIsEmpty = Object.values(dest).every((x) => !x);
 
-    if (!map || startIsEmpty || destIsEmpty) return;
+    if (!map || startIsEmpty || destIsEmpty || startTrip) return;
 
     onShowStartTripButton(true);
 
@@ -105,7 +107,7 @@ export default function Navigation({
 
     map.fitBounds(latLngBndsLit, 15);
     onTracking(false);
-  }, [start, dest, maps]);
+  }, [start, dest, maps, tracking]);
 
   useEffect(() => {
     if (!maps || !routeSections || !map) return;

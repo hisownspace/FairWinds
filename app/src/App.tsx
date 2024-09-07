@@ -95,6 +95,7 @@ function App() {
           <Navigation
             start={start}
             dest={dest}
+            tracking={tracking}
             onTracking={setTracking}
             onShowStartTripButton={setShowStartTripButton}
             startTrip={onTrip}
