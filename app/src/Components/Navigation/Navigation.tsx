@@ -110,15 +110,18 @@ export default function Navigation({
   }, [routeSections, maps, map]);
 
   useEffect(() => {
-    if (!startTrip || !camHeading || !map) return;
+    if (!startTrip || !camHeading || !map || !start) return;
     onTracking(true);
-    if (camHeading) {
+    if (start.heading) {
+      console.log("Using velocity for heading:", start.heading);
+      map.setHeading(start.heading);
+    } else if (camHeading) {
       console.log("heading:", camHeading);
       map.setHeading(360 - camHeading);
     }
     map.setZoom(17);
     map.setTilt(45);
-  }, [startTrip, camHeading]);
+  }, [startTrip, camHeading, start]);
 
   return null;
 }

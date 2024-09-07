@@ -9,6 +9,7 @@ interface PosMarkProps {
   tracking: boolean;
   onTracking: Dispatch<SetStateAction<boolean>>;
   onHeadingChange: Dispatch<SetStateAction<number>>;
+  onTrip: boolean;
 }
 
 export default function PositionMarker({
@@ -17,6 +18,7 @@ export default function PositionMarker({
   tracking,
   onTracking,
   onHeadingChange,
+  onTrip,
 }: PosMarkProps) {
   const [watchId, setWatchId] = useState<number>(0);
   const map = useMap();
@@ -80,7 +82,7 @@ export default function PositionMarker({
     const lat = loc.lat;
     const lng = loc.lng;
 
-    if (!lat || !lng || !map || !tracking) return;
+    if (!lat || !lng || !map || !tracking || !onTrip) return;
 
     map.panTo({ lat, lng });
     map.addListener("drag", () => {

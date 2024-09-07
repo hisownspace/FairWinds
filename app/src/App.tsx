@@ -75,6 +75,7 @@ function App() {
               tracking={tracking}
               onTracking={setTracking}
               onHeadingChange={setHeading}
+              onTrip={onTrip}
             />
             <DestinationMarker dest={dest} />
           </Map>
