@@ -114,7 +114,7 @@ export default function Navigation({
     onTracking(true);
     if (camHeading) {
       console.log("heading:", camHeading);
-      map.setHeading(-camHeading);
+      map.setHeading(360 - camHeading);
     }
     map.setZoom(17);
     map.setTilt(45);
