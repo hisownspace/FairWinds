@@ -110,22 +110,15 @@ export default function Navigation({
   }, [routeSections, maps, map]);
 
   useEffect(() => {
-    if (!start) return;
-    const startIsEmpty = Object.values(start).every((x) => !x);
-    if (!startTrip || startIsEmpty || !map) return;
+    if (!camHeading || !map) return;
     onTracking(true);
-    console.log(":", start);
-    if (start.heading) {
+    if (camHeading) {
       console.log("heading:", camHeading);
       map.setHeading(camHeading);
-    } else {
-      const heading = Math.floor(Math.random() * 360);
-      console.log("no heading!!!!!\n Random heading:", heading);
-      map.setHeading(heading);
     }
     map.setZoom(17);
     map.setTilt(45);
-  }, [startTrip, start]);
+  }, [camHeading]);
 
   return null;
 }
