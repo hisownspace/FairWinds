@@ -31,7 +31,7 @@ export default function PositionMarker({
     const accuracy = position.coords.accuracy;
     // console.log(lat, lng, heading, accuracy);
     const locInfo = { lat, lng, heading, accuracy };
-    if (locInfo === loc) return;
+    if (JSON.stringify(locInfo) === JSON.stringify(loc)) return;
     onLocSelected({ lat, lng, heading, accuracy });
   };
 
