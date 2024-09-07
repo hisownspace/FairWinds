@@ -35,6 +35,8 @@ export default function PositionMarker({
 
   const handleOrientation = (e: DeviceOrientationEvent) => {
     if (!e.alpha) return;
+    console.log("CHANGING HEADING!!!!!!");
+    console.log(e.alpha);
     onHeadingChange(e.alpha);
   };
 
@@ -55,7 +57,6 @@ export default function PositionMarker({
 
   useEffect(() => {
     if (navigator.geolocation) {
-      // console.log("In geolocation effect");
       navigator.geolocation.getCurrentPosition(
         onPositionUpdate,
         handleGeolocationError,
