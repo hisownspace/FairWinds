@@ -110,7 +110,7 @@ export default function Navigation({
   }, [routeSections, maps, map]);
 
   useEffect(() => {
-    if (!camHeading || !map) return;
+    if (!startTrip || !camHeading || !map) return;
     onTracking(true);
     if (camHeading) {
       console.log("heading:", camHeading);
@@ -118,7 +118,7 @@ export default function Navigation({
     }
     map.setZoom(17);
     map.setTilt(45);
-  }, [camHeading]);
+  }, [startTrip, start]);
 
   return null;
 }
