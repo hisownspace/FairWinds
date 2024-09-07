@@ -92,7 +92,7 @@ export default function Navigation({
     getRoute(start, dest);
     // console.log(latLngBndsLit);
 
-    map?.fitBounds(latLngBndsLit, 15);
+    map.fitBounds(latLngBndsLit, 15);
     onTracking(false);
   }, [start, dest, maps]);
 
@@ -114,7 +114,7 @@ export default function Navigation({
     onTracking(true);
     if (camHeading) {
       console.log("heading:", camHeading);
-      // map.setHeading(camHeading);
+      map.setHeading(camHeading);
     }
     map.setZoom(17);
     map.setTilt(45);
