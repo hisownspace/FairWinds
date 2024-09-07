@@ -12,6 +12,8 @@ interface NavProps {
   onShowStartTripButton: Dispatch<SetStateAction<boolean>>;
   startTrip: boolean;
   camHeading: number;
+  nextTurn: string;
+  setNextTurn: Dispatch<SetStateAction<string>>;
 }
 
 export default function Navigation({
@@ -21,6 +23,8 @@ export default function Navigation({
   onShowStartTripButton,
   startTrip,
   camHeading,
+  nextTurn,
+  setNextTurn,
 }: NavProps) {
   // const [bounds, setBounds] = useState<google.maps.LatLngBounds>();
   const polylineRef = useRef<google.maps.Polyline | null>(null);
@@ -51,6 +55,9 @@ export default function Navigation({
     const res = await axios.post(URL, body, { headers });
     const data = res.data;
     console.log(data);
+    setNextTurn(
+      data.routes[0].legs[0].steps[0].navigationInstruction.instructions,
+    );
     setRouteSections(
       geometry?.encoding.decodePath(data.routes[0].polyline.encodedPolyline),
     );
@@ -74,6 +81,10 @@ export default function Navigation({
     const bounds = { north, east, south, west };
     return bounds;
   };
+
+  useEffect(() => {
+    console.log(nextTurn);
+  }, [nextTurn]);
 
   useEffect(() => {
     console.log("in navigation effect");
@@ -110,16 +121,15 @@ export default function Navigation({
   }, [routeSections, maps, map]);
 
   useEffect(() => {
-    if (!startTrip || !camHeading || !map || !start) return;
-    onTracking(true);
+    console.log("in TRIP USEEFFECT");
+
+    if (!startTrip || !map || !start) return;
     if (start.heading) {
-      console.log("Using velocity for heading:", start.heading);
       map.setHeading(start.heading);
     } else if (camHeading) {
-      console.log("heading:", camHeading);
       map.setHeading(360 - camHeading);
     }
-    map.setZoom(17);
+    map.setZoom(18);
     map.setTilt(45);
   }, [startTrip, camHeading, start]);
 

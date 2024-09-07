@@ -26,10 +26,11 @@ function App() {
   const [start, setStart] = useState<coords>();
   const [address, setAddress] = useState<string>("");
   const [heading, setHeading] = useState<number>(NaN);
-  const [tracking, setTracking] = useState(true);
+  const [tracking, setTracking] = useState<boolean>(true);
   const [showStartTripButton, setShowStartTripButton] =
     useState<boolean>(false);
   const [onTrip, setOnTrip] = useState<boolean>(false);
+  const [nextTurn, setNextTurn] = useState<string>("");
 
   useEffect(() => {
     if (!dest || !currLoc) return;
@@ -80,11 +81,14 @@ function App() {
             <DestinationMarker dest={dest} />
           </Map>
           <DestinationControl onPlaceSelect={setAddress} />
-          <CenterControl onTrackingSet={setTracking} tracking={tracking} />
+          {!tracking && !showStartTripButton ? (
+            <CenterControl onTrackingSet={setTracking} tracking={tracking} />
+          ) : null}
           <StartTripControl
             showStartTripButton={showStartTripButton}
             onStartTrip={setOnTrip}
             tracking={tracking}
+            onTracking={setTracking}
           />
           <Geocoding address={address} onDestSelect={setDest} />
           <LocationRange loc={currLoc} />
@@ -95,6 +99,8 @@ function App() {
             onShowStartTripButton={setShowStartTripButton}
             startTrip={onTrip}
             camHeading={heading}
+            nextTurn={nextTurn}
+            setNextTurn={setNextTurn}
           />
         </div>
       </APIProvider>

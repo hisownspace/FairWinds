@@ -82,14 +82,15 @@ export default function PositionMarker({
     const lat = loc.lat;
     const lng = loc.lng;
 
-    if (!lat || !lng || !map || !tracking || !onTrip) return;
+    console.log(lat, lng, tracking);
+    if (!lat || !lng || !map || !tracking) return;
 
     map.panTo({ lat, lng });
     map.addListener("drag", () => {
       onTracking(false);
       // console.log("no longer tracking position!");
     });
-  }, [tracking, map, loc]);
+  }, [tracking, map, loc, onTrip]);
 
   return loc.lat && loc.lng ? (
     <AdvancedMarker position={{ lat: loc.lat, lng: loc.lng }}>
