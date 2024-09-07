@@ -9,6 +9,7 @@ import CenterControl from "./Components/CenterControl";
 import Navigation from "./Components/Navigation";
 import DestinationMarker from "./Components/DestinationMarker";
 import StartTripControl from "./Components/StartTripControl";
+import NextDirection from "./Components/NextDirection";
 
 export const API_KEY: string = import.meta.env.VITE_GOOGLE_MAPS_API_KEY!;
 const MAP_ID: string = import.meta.env.VITE_GOOGLE_MAPS_MAP_ID!;
@@ -58,6 +59,7 @@ function App() {
 
   return (
     <>
+      <NextDirection nextTurn={nextTurn} />
       <APIProvider
         apiKey={API_KEY}
         onLoad={() => console.log("Maps API has loaded.")}
@@ -75,6 +77,7 @@ function App() {
               loc={currLoc}
               tracking={tracking}
               onTracking={setTracking}
+              heading={heading}
               onHeadingChange={setHeading}
               onTrip={onTrip}
             />

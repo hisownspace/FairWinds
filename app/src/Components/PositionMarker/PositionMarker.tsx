@@ -8,6 +8,7 @@ interface PosMarkProps {
   loc: coords;
   tracking: boolean;
   onTracking: Dispatch<SetStateAction<boolean>>;
+  heading: number;
   onHeadingChange: Dispatch<SetStateAction<number>>;
   onTrip: boolean;
 }
@@ -17,6 +18,7 @@ export default function PositionMarker({
   loc,
   tracking,
   onTracking,
+  heading,
   onHeadingChange,
   onTrip,
 }: PosMarkProps) {
@@ -41,6 +43,7 @@ export default function PositionMarker({
     if (!e.alpha) return;
     console.log("CHANGING HEADING!!!!!!");
     console.log(e.alpha);
+    if (Math.abs(e.alpha - heading) < 5) return;
     onHeadingChange(e.alpha);
   };
 
@@ -90,6 +93,9 @@ export default function PositionMarker({
       onTracking(false);
       // console.log("no longer tracking position!");
     });
+    // map.addListener("zoom_changed", () => {
+    //   onTracking(false);
+    // });
   }, [tracking, map, loc, onTrip]);
 
   return loc.lat && loc.lng ? (
