@@ -44,6 +44,7 @@ export default function PositionMarker({
     if (Math.abs(e.alpha - heading) < 5) return;
     console.log("CHANGING HEADING!!!!!!");
     console.log(e.alpha);
+    console.log(heading);
     onHeadingChange(e.alpha);
   };
 
