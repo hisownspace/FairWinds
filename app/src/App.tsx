@@ -35,7 +35,13 @@ function App() {
     if (!dest || !currLoc) return;
     const destIsEmpty = Object.values(dest).every((x) => !x);
     const currLocIsEmpty = Object.values(currLoc).every((x) => !x);
-    if (destIsEmpty || currLocIsEmpty) return;
+    if (
+      destIsEmpty ||
+      currLocIsEmpty ||
+      JSON.stringify(currLoc) === JSON.stringify(start)
+    )
+      return;
+    console.log(JSON.stringify(currLoc) === JSON.stringify(start));
     console.log("CHANGING START");
     console.log(
       "OLD CURRLOC:",
