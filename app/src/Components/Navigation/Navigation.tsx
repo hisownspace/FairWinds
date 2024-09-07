@@ -118,7 +118,7 @@ export default function Navigation({
     }
     map.setZoom(17);
     map.setTilt(45);
-  }, [startTrip, start]);
+  }, [startTrip, camHeading]);
 
   return null;
 }
