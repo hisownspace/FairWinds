@@ -31,7 +31,6 @@ export default function LocationRange({ loc }: LocRngProps) {
         center: { lat: loc.lat, lng: loc.lng },
         radius: loc.accuracy,
       });
-      console.log("in effect!!!!!");
       circ.setMap(map);
       circle.current = circ;
     }
@@ -63,7 +62,7 @@ export default function LocationRange({ loc }: LocRngProps) {
     const acc = loc.accuracy;
     const lat = loc.lat;
     const lng = loc.lng;
-    console.log(circle);
+    // console.log(circle);
 
     if (!acc || !lat || !lng || !circle.current) return;
 

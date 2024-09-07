@@ -32,8 +32,21 @@ function App() {
 
   useEffect(() => {
     if (!dest || !currLoc) return;
-    setStart(currLoc);
-  }, [start, dest]);
+    const destIsEmpty = Object.values(dest).every((x) => !x);
+    const currLocIsEmpty = Object.values(currLoc).every((x) => !x);
+    if (destIsEmpty || currLocIsEmpty) return;
+    console.log("CHANGING START");
+    console.log(
+      "OLD CURRLOC:",
+      `{lat: ${currLoc.lat}, lng: ${currLoc.lng}, heading: ${currLoc.heading}, accuracy: ${currLoc.accuracy} }`,
+    );
+    if (start)
+      console.log(
+        "NEW START:",
+        `{lat: ${start.lat}, lng: ${start.lng}, heading: ${start.heading}, accuracy: ${start.accuracy} }`,
+      );
+    setStart({ ...currLoc });
+  }, [currLoc, dest]);
 
   return (
     <>

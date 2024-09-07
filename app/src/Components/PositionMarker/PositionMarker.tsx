@@ -20,9 +20,9 @@ export default function PositionMarker({
   const map = useMap();
 
   const onPositionUpdate = (position: GeolocationPosition) => {
-    console.log("in position update handler");
-    console.log(position);
-    console.log(position.coords);
+    // console.log("in position update handler");
+    // console.log(position);
+    // console.log(position.coords);
     const lat = position.coords.latitude;
     const lng = position.coords.longitude;
     const heading = position.coords.heading;
@@ -31,9 +31,9 @@ export default function PositionMarker({
     onLocSelected({ lat, lng, heading, accuracy });
   };
 
-  // const handleOrientation = (e: DeviceOrientationEvent) => {
-  //   onLocSelected({ ...loc, heading: e.alpha });
-  // }
+  const handleOrientation = (e: DeviceOrientationEvent) => {
+    onLocSelected({ ...loc, heading: e.alpha });
+  };
 
   const handleGeolocationError = (err: GeolocationPositionError) => {
     const { code }: { code: number } = err;
@@ -52,7 +52,7 @@ export default function PositionMarker({
 
   useEffect(() => {
     if (navigator.geolocation) {
-      console.log("In geolocation effect");
+      // console.log("In geolocation effect");
       navigator.geolocation.getCurrentPosition(
         onPositionUpdate,
         handleGeolocationError,
@@ -63,7 +63,7 @@ export default function PositionMarker({
           handleGeolocationError,
         ),
       );
-    // window.addEventListener("deviceorientation", handleOrientation, true);
+      window.addEventListener("deviceorientation", handleOrientation, true);
     }
     return () => {
       navigator.geolocation.clearWatch(watchId);
@@ -79,7 +79,7 @@ export default function PositionMarker({
     map.panTo({ lat, lng });
     map.addListener("drag", () => {
       onTracking(false);
-      console.log("no longer tracking position!");
+      // console.log("no longer tracking position!");
     });
   }, [tracking, map, loc]);
 

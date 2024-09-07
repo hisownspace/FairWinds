@@ -88,7 +88,7 @@ export default function Navigation({
 
     const latLngBndsLit = getBounds(start, dest);
     getRoute(start, dest);
-    console.log(latLngBndsLit);
+    // console.log(latLngBndsLit);
 
     map?.fitBounds(latLngBndsLit, 15);
     onTracking(false);
@@ -112,9 +112,9 @@ export default function Navigation({
     const startIsEmpty = Object.values(start).every((x) => !x);
     if (!startTrip || startIsEmpty || !map) return;
     onTracking(true);
-    console.log("START:", start);
+    console.log(":", start);
     if (start.heading) {
-      console.log("heading!!!!");
+      console.log("heading:", start.heading);
       map.setHeading(start.heading);
     } else {
       const heading = Math.floor(Math.random() * 360);
