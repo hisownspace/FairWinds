@@ -41,9 +41,9 @@ export default function PositionMarker({
 
   const handleOrientation = (e: DeviceOrientationEvent) => {
     if (!e.alpha) return;
+    if (Math.abs(e.alpha - heading) < 5) return;
     console.log("CHANGING HEADING!!!!!!");
     console.log(e.alpha);
-    if (Math.abs(e.alpha - heading) < 5) return;
     onHeadingChange(e.alpha);
   };
 
