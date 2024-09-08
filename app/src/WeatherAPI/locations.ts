@@ -45,6 +45,17 @@ interface forecast {
   detailedForecast: string;
 }
 
+interface simpleCoords {
+  lat: number;
+  lng: number;
+}
+
+const sin = Math.sin;
+const cos = Math.cos;
+const atan2 = Math.atan2;
+const sqrt = Math.sqrt;
+const PI = Math.PI;
+
 export class TripLocation {
   public longitude: number;
   public latitude: number;
@@ -174,6 +185,112 @@ export class TripLocation {
     } else {
       setTimeout(requestMethod, 3600000);
     }
+  }
+
+  public static findGridLocations(
+    latLngArr: google.maps.MVCArray<google.maps.LatLng>,
+  ) {
+    const start = Date.now();
+    console.log(latLngArr);
+    const locations = [];
+    let prevCoords: simpleCoords = { lat: NaN, lng: NaN };
+    let gridpoint: simpleCoords = { lat: NaN, lng: NaN };
+    let d: number;
+    for (let latLng of latLngArr.Eg) {
+      const nextCoords: simpleCoords = { lat: latLng.lat(), lng: latLng.lng() };
+      const distance = this.computeDistance(gridpoint, nextCoords);
+      if (!prevCoords.lat && !prevCoords.lng) {
+        locations.push(nextCoords);
+        gridpoint = nextCoords;
+        prevCoords = nextCoords;
+      } else if (distance > 2.5) {
+        // console.log("DISTANCE:", distance);
+        const d2g = 2.5 - this.computeDistance(gridpoint, prevCoords);
+        // console.log("distance to go", d2g);
+        const interPoint = this.computeInterPoint(
+          d2g / this.computeDistance(prevCoords, nextCoords),
+          this.computeDistance(prevCoords, nextCoords),
+          prevCoords,
+          nextCoords,
+        );
+        gridpoint = interPoint;
+        // console.log(gridpoint);
+        locations.push(gridpoint);
+        prevCoords = gridpoint;
+      } else {
+        d = distance;
+        // console.log(d);
+        prevCoords = nextCoords;
+      }
+    }
+    console.log(locations);
+    // const end = Date.now();
+    // console.log(`Time to execute: ${(end - start) / 1000}`);
+    // for (let i = 0; i < locations.length; i++) {
+    //   if (i === locations.length - 1) continue;
+    //   console.log(this.computeDistance(locations[i], locations[i + 1]));
+    // }
+  }
+
+  protected static degreesToRadians(deg: number) {
+    return deg * (PI / 180);
+  }
+
+  protected static radiansToDegrees(rad: number) {
+    return 180 * (rad / PI);
+  }
+
+  protected static computeDistance(
+    coords1: simpleCoords,
+    coords2: simpleCoords,
+  ) {
+    const earthRadiusKm = 6371;
+
+    let lat1 = this.degreesToRadians(coords1.lat);
+    let lat2 = this.degreesToRadians(coords2.lat);
+
+    let lng1 = this.degreesToRadians(coords1.lng);
+    let lng2 = this.degreesToRadians(coords2.lng);
+
+    let dLat = lat2 - lat1;
+    let dLng = lng2 - lng1;
+
+    // Haversine Formula for distance on a sphere.
+    // The earth is not a perfect sphere, but this
+    // close enough for our purposes.
+    let a =
+      sin(dLat / 2) * sin(dLat / 2) +
+      sin(dLng / 2) * sin(dLng / 2) * cos(lat1) * cos(lat2);
+    let c = 2 * atan2(sqrt(a), sqrt(1 - a));
+    return earthRadiusKm * c;
+  }
+
+  protected static computeInterPoint(
+    f: number,
+    d: number,
+    c1: simpleCoords,
+    c2: simpleCoords,
+  ) {
+    console.log("frac:", f, "distance:", d);
+    let lat1 = this.degreesToRadians(c1.lat);
+    let lat2 = this.degreesToRadians(c2.lat);
+
+    let lng1 = this.degreesToRadians(c1.lng);
+    let lng2 = this.degreesToRadians(c2.lng);
+
+    const a = sin((1 - f) * d) / sin(d);
+    const b = sin(f * d) / sin(d);
+    const x = a * cos(lat1) * cos(lng1) + b * cos(lat2) * cos(lng2);
+    const y = a * cos(lat1) * sin(lng1) + b * cos(lat2) * sin(lng2);
+    const z = a * sin(lat1) + b * sin(lat2);
+    let lat = atan2(z, sqrt(x ** 2 + y ** 2));
+    let lng = atan2(y, x);
+
+    lat = this.radiansToDegrees(lat);
+    lng = this.radiansToDegrees(lng);
+
+    // console.log(lat, lng);
+    return { lat, lng };
   }
 }
 

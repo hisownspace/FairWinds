@@ -1,8 +1,10 @@
 import { useEffect, useState, useRef, Dispatch, SetStateAction } from "react";
 
-import { coords } from "../../App";
-import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import axios from "axios";
+import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
+
+import { TripLocation } from "../../WeatherAPI/locations";
+import { coords } from "../../App";
 import { API_KEY } from "../../App";
 
 interface NavProps {
@@ -116,6 +118,7 @@ export default function Navigation({
       strokeColor: "blue",
       strokeWeight: 10,
     });
+    TripLocation.findGridLocations(polylineRef.current.getPath());
     polylineRef.current.setMap(map);
     return () => {
       polylineRef.current?.setVisible(false);
