@@ -190,22 +190,22 @@ export class TripLocation {
   public static findGridLocations(
     latLngArr: google.maps.MVCArray<google.maps.LatLng>,
   ) {
-    const start = Date.now();
+    // const start = Date.now();
     console.log(latLngArr);
     const locations = [];
     let prevCoords: simpleCoords = { lat: NaN, lng: NaN };
     let gridpoint: simpleCoords = { lat: NaN, lng: NaN };
-    let d: number;
-    for (let latLng of latLngArr.Eg) {
+    // let d: number;
+    for (let latLng of latLngArr.getArray()) {
       const nextCoords: simpleCoords = { lat: latLng.lat(), lng: latLng.lng() };
       const distance = this.computeDistance(gridpoint, nextCoords);
       if (!prevCoords.lat && !prevCoords.lng) {
         locations.push(nextCoords);
         gridpoint = nextCoords;
         prevCoords = nextCoords;
-      } else if (distance > 2.5) {
+      } else if (distance > 2.49) {
         // console.log("DISTANCE:", distance);
-        const d2g = 2.5 - this.computeDistance(gridpoint, prevCoords);
+        const d2g = 2.49 - this.computeDistance(gridpoint, prevCoords);
         // console.log("distance to go", d2g);
         const interPoint = this.computeInterPoint(
           d2g / this.computeDistance(prevCoords, nextCoords),
@@ -218,18 +218,16 @@ export class TripLocation {
         locations.push(gridpoint);
         prevCoords = gridpoint;
       } else {
-        d = distance;
-        // console.log(d);
         prevCoords = nextCoords;
       }
     }
     console.log(locations);
     // const end = Date.now();
     // console.log(`Time to execute: ${(end - start) / 1000}`);
-    // for (let i = 0; i < locations.length; i++) {
-    //   if (i === locations.length - 1) continue;
-    //   console.log(this.computeDistance(locations[i], locations[i + 1]));
-    // }
+    for (let i = 0; i < locations.length; i++) {
+      if (i === locations.length - 1) continue;
+      console.log(this.computeDistance(locations[i], locations[i + 1]));
+    }
   }
 
   protected static degreesToRadians(deg: number) {
