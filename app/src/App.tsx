@@ -2,15 +2,17 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import { Map, APIProvider } from "@vis.gl/react-google-maps";
 import Geocoding from "./Components/Geocoding";
-import LocationRange from "./Components/LocationRange";
-import PositionMarker from "./Components/PositionMarker";
 import {
   DestinationControl,
   CenterControl,
   StartTripControl,
 } from "./Components/Controls";
+import {
+  DestinationMarker,
+  PositionMarker,
+  LocationRange,
+} from "./Components/Markers";
 import Navigation from "./Components/Navigation";
-import DestinationMarker from "./Components/DestinationMarker";
 import NextDirection from "./Components/NextDirection";
 
 export const API_KEY: string = import.meta.env.VITE_GOOGLE_MAPS_API_KEY!;
