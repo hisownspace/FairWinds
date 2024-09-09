@@ -1,18 +1,15 @@
 import { useEffect, useState, useRef, Dispatch, SetStateAction } from "react";
 
-import { coords } from "../../App";
+import { coords, mapCamState } from "../../App";
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import axios from "axios";
 import { API_KEY } from "../../App";
-import { handleMapStateChange } from "../../MapView/MapView";
 
 interface NavProps {
   start: coords | undefined;
   dest: coords | undefined;
-  onTrackingChange: Dispatch<SetStateAction<boolean>>;
-  tracking: boolean;
-  onShowStartTripButton: Dispatch<SetStateAction<boolean>>;
-  startTrip: boolean;
+  mapCam: mapCamState;
+  onMapStateChange: Dispatch<SetStateAction<mapCamState>>;
   camHeading: number;
   nextTurn: string;
   onNewNextTurn: Dispatch<SetStateAction<string>>;
@@ -21,10 +18,8 @@ interface NavProps {
 export default function Navigation({
   start,
   dest,
-  tracking,
-  onTrackingChange,
-  onShowStartTripButton,
-  startTrip,
+  mapCam,
+  onMapStateChange,
   camHeading,
   onNewNextTurn,
 }: NavProps) {
@@ -92,17 +87,19 @@ export default function Navigation({
     const startIsEmpty = Object.values(start).every((x) => !x);
     const destIsEmpty = Object.values(dest).every((x) => !x);
 
-    if (!map || startIsEmpty || destIsEmpty || startTrip) return;
+    if (!map || startIsEmpty || destIsEmpty || mapCam.onTrip) return;
 
-    onShowStartTripButton(true);
+    onMapStateChange((mapState) => ({
+      ...mapState,
+      tripSummary: true,
+      tracking: false,
+    }));
 
     const latLngBndsLit = getBounds(start, dest);
     getRoute(start, dest);
-    // console.log(latLngBndsLit);
 
     map.fitBounds(latLngBndsLit, 15);
-    onTrackingChange(false);
-  }, [start, dest, maps, tracking]);
+  }, [start, dest, maps, mapCam.onTrip]);
 
   useEffect(() => {
     if (!maps || !routeSections || !map) return;
@@ -118,7 +115,7 @@ export default function Navigation({
   }, [routeSections, maps, map]);
 
   useEffect(() => {
-    if (!startTrip || !map || !start) return;
+    if (!mapCam.onTrip || !map || !start) return;
     if (start.bearing) {
       map.setHeading(start.bearing);
     } else if (camHeading) {
@@ -126,8 +123,8 @@ export default function Navigation({
     }
     map.setZoom(18);
     map.setTilt(45);
-    handleMapStateChange(tracking, startTrip, tripSummary);
-  }, [startTrip, camHeading, start]);
+    // handleMapStateChange(tracking, startTrip, tripSummary);
+  }, [mapCam, camHeading, start]);
 
   return null;
 }

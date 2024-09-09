@@ -3,19 +3,21 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ControlPosition, MapControl } from "@vis.gl/react-google-maps";
 import { SetStateAction } from "react";
 import { Dispatch } from "react";
+import { mapCamState } from "../../../App";
 
 interface StartTripCtrlProps {
-  onStartTripSelected: Dispatch<SetStateAction<boolean>>;
-  onTrackingChange: Dispatch<SetStateAction<boolean>>;
+  onMapStateChange: Dispatch<SetStateAction<mapCamState>>;
 }
 
 export default function StartTripControl({
-  onStartTripSelected,
-  onTrackingChange,
+  onMapStateChange,
 }: StartTripCtrlProps) {
   const handleStartTrip = () => {
-    onTrackingChange(true);
-    onStartTripSelected(true);
+    onMapStateChange((mapState) => ({
+      ...mapState,
+      tracking: true,
+      onTrip: true,
+    }));
   };
   return (
     <MapControl position={ControlPosition.LEFT_BOTTOM}>

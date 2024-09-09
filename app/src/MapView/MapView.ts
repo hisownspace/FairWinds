@@ -39,11 +39,16 @@
 //   }
 //
 //   changeState(setState: Dispatch<SetStateAction<any>>, state: boolean) {
-//     
+//
 //   }
 // }
 
-export const handleMapStateChange(tracking: boolean, onTrip: boolean, tripSummary: boolean, map: google.maps.Map) {
+export function useMapState(
+  tracking: boolean,
+  onTrip: boolean,
+  tripSummary: boolean,
+  map: google.maps.Map,
+) {
   if (tripSummary && tracking) {
     // pan to bounds that include all points on trip
     // allow drag and show center location button and startTrip button

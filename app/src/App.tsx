@@ -25,16 +25,23 @@ export interface coords {
   accuracy: number;
 }
 
+export interface mapCamState {
+  tracking: boolean;
+  tripSummary: boolean;
+  onTrip: boolean;
+}
+
 function App() {
   const [currPos, setCurrPos] = useState<coords>({} as coords);
   const [dest, setDest] = useState<coords>({} as coords);
   const [start, setStart] = useState<coords>();
   const [address, setAddress] = useState<string>("");
   const [heading, setHeading] = useState<number>(NaN);
-  const [tracking, setTracking] = useState<boolean>(true);
-  const [showStartTripButton, setShowStartTripButton] =
-    useState<boolean>(false);
-  const [onTrip, setOnTrip] = useState<boolean>(false);
+  const [mapCam, setMapCam] = useState<mapCamState>({
+    tracking: true,
+    tripSummary: false,
+    onTrip: false,
+  } as mapCamState);
   const [nextTurn, setNextTurn] = useState<string>("");
 
   useEffect(() => {
@@ -68,33 +75,27 @@ function App() {
             <PositionMarker
               onPosUpdate={setCurrPos}
               pos={currPos}
-              tracking={tracking}
-              onTrackingChange={setTracking}
               heading={heading}
               onHeadingChange={setHeading}
-              onTrip={onTrip}
+              mapCam={mapCam}
+              onMapStateChange={setMapCam}
             />
             <DestinationMarker dest={dest} />
           </Map>
           <DestinationControl onPlaceSelect={setAddress} />
-          {!tracking && !showStartTripButton ? (
-            <CenterControl onTrackingChange={setTracking} tracking={tracking} />
+          {!mapCam.tracking && !mapCam.tripSummary ? (
+            <CenterControl onMapStateChange={setMapCam} />
           ) : null}
-          {showStartTripButton && !tracking ? (
-            <StartTripControl
-              onStartTripSelected={setOnTrip}
-              onTrackingChange={setTracking}
-            />
+          {mapCam.tripSummary && !mapCam.tracking ? (
+            <StartTripControl onMapStateChange={setMapCam} />
           ) : null}
           <Geocoding address={address} onDestSelect={setDest} />
           <LocationRange loc={currPos} />
           <Navigation
             start={start}
             dest={dest}
-            tracking={tracking}
-            onTrackingChange={setTracking}
-            onShowStartTripButton={setShowStartTripButton}
-            startTrip={onTrip}
+            mapCam={mapCam}
+            onMapStateChange={setMapCam}
             camHeading={heading}
             nextTurn={nextTurn}
             onNewNextTurn={setNextTurn}

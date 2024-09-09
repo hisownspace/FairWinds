@@ -2,26 +2,25 @@ import { ControlPosition, MapControl } from "@vis.gl/react-google-maps";
 import { Dispatch, SetStateAction } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCrosshairs } from "@fortawesome/free-solid-svg-icons";
+import { mapCamState } from "../../../App";
 
 interface CenterProps {
-  onTrackingChange: Dispatch<SetStateAction<boolean>>;
-  tracking: boolean;
+  onMapStateChange: Dispatch<SetStateAction<mapCamState>>;
 }
 
-export default function CenterControl({
-  onTrackingChange,
-  tracking,
-}: CenterProps) {
-  return !tracking ? (
+export default function CenterControl({ onMapStateChange }: CenterProps) {
+  return (
     <MapControl position={ControlPosition.RIGHT_BOTTOM}>
       <div className="center-container">
         <button
-          onClick={() => onTrackingChange(true)}
+          onClick={() =>
+            onMapStateChange((mapState) => ({ ...mapState, tracking: true }))
+          }
           className="center-button"
         >
           <FontAwesomeIcon icon={faCrosshairs} />
         </button>
       </div>
     </MapControl>
-  ) : null;
+  );
 }

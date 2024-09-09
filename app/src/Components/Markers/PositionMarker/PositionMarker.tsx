@@ -1,26 +1,24 @@
 import { useEffect, Dispatch, SetStateAction, useState } from "react";
 import { AdvancedMarker, useMap } from "@vis.gl/react-google-maps";
 
-import { coords } from "../../../App";
+import { coords, mapCamState } from "../../../App";
 
 interface PosMarkProps {
   onPosUpdate: Dispatch<SetStateAction<coords>>;
   pos: coords;
-  tracking: boolean;
-  onTrackingChange: Dispatch<SetStateAction<boolean>>;
   heading: number;
   onHeadingChange: Dispatch<SetStateAction<number>>;
-  onTrip: boolean;
+  mapCam: mapCamState;
+  onMapStateChange: Dispatch<SetStateAction<mapCamState>>;
 }
 
 export default function PositionMarker({
   onPosUpdate,
   pos,
-  tracking,
-  onTrackingChange,
   heading,
   onHeadingChange,
-  onTrip,
+  mapCam,
+  onMapStateChange,
 }: PosMarkProps) {
   const [watchId, setWatchId] = useState<number>(0);
   const map = useMap();
@@ -84,13 +82,13 @@ export default function PositionMarker({
     const lat = pos.lat;
     const lng = pos.lng;
 
-    if (!lat || !lng || !map || !tracking) return;
+    if (!lat || !lng || !map || !mapCam.tracking) return;
 
     map.panTo({ lat, lng });
     map.addListener("drag", () => {
-      onTrackingChange(false);
+      onMapStateChange((camState) => ({ ...camState, tracking: false }));
     });
-  }, [tracking, map, pos, onTrip]);
+  }, [mapCam, map, pos]);
 
   return pos.lat && pos.lng ? (
     <AdvancedMarker position={{ lat: pos.lat, lng: pos.lng }}>
