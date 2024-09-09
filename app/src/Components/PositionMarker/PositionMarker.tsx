@@ -25,26 +25,24 @@ export default function PositionMarker({
   const [watchId, setWatchId] = useState<number>(0);
   const map = useMap();
 
+  // updates the currLoc state when new location information is received
   const onPositionUpdate = (position: GeolocationPosition) => {
-    // console.log("in position update handler");
-    // console.log(position);
-    // console.log(position.coords);
     const lat = position.coords.latitude;
     const lng = position.coords.longitude;
-    const heading = position.coords.heading;
+    const bearing = position.coords.heading;
     const accuracy = position.coords.accuracy;
-    // console.log(lat, lng, heading, accuracy);
-    const locInfo = { lat, lng, heading, accuracy };
+
+    const locInfo = { lat, lng, bearing, accuracy };
+
     if (JSON.stringify(locInfo) === JSON.stringify(loc)) return;
-    onLocSelected({ lat, lng, heading, accuracy });
+    onLocSelected({ lat, lng, bearing, accuracy });
   };
 
+  // updates heading state when phone changes orientation
+  // (nothing happens when accessed from desktop/laptop)
   const handleOrientation = (e: DeviceOrientationEvent) => {
     if (!e.alpha) return;
     if (Math.abs(e.alpha - heading) < 5) return;
-    console.log("CHANGING HEADING!!!!!!");
-    console.log(e.alpha);
-    console.log(heading);
     onHeadingChange(e.alpha);
   };
 
@@ -86,17 +84,12 @@ export default function PositionMarker({
     const lat = loc.lat;
     const lng = loc.lng;
 
-    console.log(lat, lng, tracking);
     if (!lat || !lng || !map || !tracking) return;
 
     map.panTo({ lat, lng });
     map.addListener("drag", () => {
       onTracking(false);
-      // console.log("no longer tracking position!");
     });
-    // map.addListener("zoom_changed", () => {
-    //   onTracking(false);
-    // });
   }, [tracking, map, loc, onTrip]);
 
   return loc.lat && loc.lng ? (

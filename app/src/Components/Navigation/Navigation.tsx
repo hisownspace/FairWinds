@@ -25,10 +25,8 @@ export default function Navigation({
   onShowStartTripButton,
   startTrip,
   camHeading,
-  nextTurn,
   setNextTurn,
 }: NavProps) {
-  // const [bounds, setBounds] = useState<google.maps.LatLngBounds>();
   const polylineRef = useRef<google.maps.Polyline | null>(null);
   const [routeSections, setRouteSections] = useState<google.maps.LatLng[]>();
 
@@ -85,10 +83,6 @@ export default function Navigation({
   };
 
   useEffect(() => {
-    console.log(nextTurn);
-  }, [nextTurn]);
-
-  useEffect(() => {
     console.log("in navigation effect");
     console.log(map, start, dest);
 
@@ -123,11 +117,9 @@ export default function Navigation({
   }, [routeSections, maps, map]);
 
   useEffect(() => {
-    console.log("in TRIP USEEFFECT");
-
     if (!startTrip || !map || !start) return;
-    if (start.heading) {
-      map.setHeading(start.heading);
+    if (start.bearing) {
+      map.setHeading(start.bearing);
     } else if (camHeading) {
       map.setHeading(360 - camHeading);
     }
