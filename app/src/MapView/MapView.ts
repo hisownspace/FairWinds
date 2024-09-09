@@ -47,7 +47,6 @@ export function useMapState(
   tracking: boolean,
   onTrip: boolean,
   tripSummary: boolean,
-  map: google.maps.Map,
 ) {
   if (tripSummary && tracking) {
     // pan to bounds that include all points on trip
