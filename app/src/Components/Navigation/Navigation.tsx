@@ -8,24 +8,24 @@ import { API_KEY } from "../../App";
 interface NavProps {
   start: coords | undefined;
   dest: coords | undefined;
-  onTracking: Dispatch<SetStateAction<boolean>>;
+  onTrackingChange: Dispatch<SetStateAction<boolean>>;
   tracking: boolean;
   onShowStartTripButton: Dispatch<SetStateAction<boolean>>;
   startTrip: boolean;
   camHeading: number;
   nextTurn: string;
-  setNextTurn: Dispatch<SetStateAction<string>>;
+  onNewNextTurn: Dispatch<SetStateAction<string>>;
 }
 
 export default function Navigation({
   start,
   dest,
   tracking,
-  onTracking,
+  onTrackingChange,
   onShowStartTripButton,
   startTrip,
   camHeading,
-  setNextTurn,
+  onNewNextTurn,
 }: NavProps) {
   const polylineRef = useRef<google.maps.Polyline | null>(null);
   const [routeSections, setRouteSections] = useState<google.maps.LatLng[]>();
@@ -55,7 +55,7 @@ export default function Navigation({
     const res = await axios.post(URL, body, { headers });
     const data = res.data;
     console.log(data);
-    setNextTurn(
+    onNewNextTurn(
       data.routes[0].legs[0].steps[0].navigationInstruction.instructions,
     );
     setRouteSections(
@@ -100,7 +100,7 @@ export default function Navigation({
     // console.log(latLngBndsLit);
 
     map.fitBounds(latLngBndsLit, 15);
-    onTracking(false);
+    onTrackingChange(false);
   }, [start, dest, maps, tracking]);
 
   useEffect(() => {

@@ -17,12 +17,12 @@ const MAP_ID: string = import.meta.env.VITE_GOOGLE_MAPS_MAP_ID!;
 export interface coords {
   lat: number;
   lng: number;
-  heading: number | null;
+  bearing: number | null;
   accuracy: number;
 }
 
 function App() {
-  const [currLoc, setCurrLoc] = useState<coords>({} as coords);
+  const [currPos, setCurrPos] = useState<coords>({} as coords);
   const [dest, setDest] = useState<coords>({} as coords);
   const [start, setStart] = useState<coords>();
   const [address, setAddress] = useState<string>("");
@@ -34,28 +34,17 @@ function App() {
   const [nextTurn, setNextTurn] = useState<string>("");
 
   useEffect(() => {
-    if (!dest || !currLoc) return;
+    if (!dest || !currPos) return;
     const destIsEmpty = Object.values(dest).every((x) => !x);
-    const currLocIsEmpty = Object.values(currLoc).every((x) => !x);
+    const currPosIsEmpty = Object.values(currPos).every((x) => !x);
     if (
       destIsEmpty ||
-      currLocIsEmpty ||
-      JSON.stringify(currLoc) === JSON.stringify(start)
+      currPosIsEmpty ||
+      JSON.stringify(currPos) === JSON.stringify(start)
     )
       return;
-    console.log(JSON.stringify(currLoc) === JSON.stringify(start));
-    console.log("CHANGING START");
-    console.log(
-      "OLD CURRLOC:",
-      `{lat: ${currLoc.lat}, lng: ${currLoc.lng}, heading: ${currLoc.heading}, accuracy: ${currLoc.accuracy} }`,
-    );
-    if (start)
-      console.log(
-        "NEW START:",
-        `{lat: ${start.lat}, lng: ${start.lng}, heading: ${start.heading}, accuracy: ${start.accuracy} }`,
-      );
-    setStart({ ...currLoc });
-  }, [currLoc, dest]);
+    setStart({ ...currPos });
+  }, [currPos, dest]);
 
   return (
     <>
@@ -73,10 +62,10 @@ function App() {
             mapTypeControl={false}
           >
             <PositionMarker
-              onLocSelected={setCurrLoc}
-              loc={currLoc}
+              onPosUpdate={setCurrPos}
+              pos={currPos}
               tracking={tracking}
-              onTracking={setTracking}
+              onTrackingChange={setTracking}
               heading={heading}
               onHeadingChange={setHeading}
               onTrip={onTrip}
@@ -85,26 +74,26 @@ function App() {
           </Map>
           <DestinationControl onPlaceSelect={setAddress} />
           {!tracking && !showStartTripButton ? (
-            <CenterControl onTrackingSet={setTracking} tracking={tracking} />
+            <CenterControl onTrackingChange={setTracking} tracking={tracking} />
           ) : null}
           <StartTripControl
             showStartTripButton={showStartTripButton}
-            onStartTrip={setOnTrip}
+            onStartTripSelected={setOnTrip}
             tracking={tracking}
-            onTracking={setTracking}
+            onTrackingChange={setTracking}
           />
           <Geocoding address={address} onDestSelect={setDest} />
-          <LocationRange loc={currLoc} />
+          <LocationRange loc={currPos} />
           <Navigation
             start={start}
             dest={dest}
             tracking={tracking}
-            onTracking={setTracking}
+            onTrackingChange={setTracking}
             onShowStartTripButton={setShowStartTripButton}
             startTrip={onTrip}
             camHeading={heading}
             nextTurn={nextTurn}
-            setNextTurn={setNextTurn}
+            onNewNextTurn={setNextTurn}
           />
         </div>
       </APIProvider>

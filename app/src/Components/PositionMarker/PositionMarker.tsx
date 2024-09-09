@@ -4,20 +4,20 @@ import { AdvancedMarker, useMap } from "@vis.gl/react-google-maps";
 import { coords } from "../../App";
 
 interface PosMarkProps {
-  onLocSelected: Dispatch<SetStateAction<coords>>;
-  loc: coords;
+  onPosUpdate: Dispatch<SetStateAction<coords>>;
+  pos: coords;
   tracking: boolean;
-  onTracking: Dispatch<SetStateAction<boolean>>;
+  onTrackingChange: Dispatch<SetStateAction<boolean>>;
   heading: number;
   onHeadingChange: Dispatch<SetStateAction<number>>;
   onTrip: boolean;
 }
 
 export default function PositionMarker({
-  onLocSelected,
-  loc,
+  onPosUpdate,
+  pos,
   tracking,
-  onTracking,
+  onTrackingChange,
   heading,
   onHeadingChange,
   onTrip,
@@ -25,17 +25,17 @@ export default function PositionMarker({
   const [watchId, setWatchId] = useState<number>(0);
   const map = useMap();
 
-  // updates the currLoc state when new location information is received
+  // updates the currPos state when new location information is received
   const onPositionUpdate = (position: GeolocationPosition) => {
     const lat = position.coords.latitude;
     const lng = position.coords.longitude;
     const bearing = position.coords.heading;
     const accuracy = position.coords.accuracy;
 
-    const locInfo = { lat, lng, bearing, accuracy };
+    const posInfo = { lat, lng, bearing, accuracy };
 
-    if (JSON.stringify(locInfo) === JSON.stringify(loc)) return;
-    onLocSelected({ lat, lng, bearing, accuracy });
+    if (JSON.stringify(posInfo) === JSON.stringify(pos)) return;
+    onPosUpdate({ lat, lng, bearing, accuracy });
   };
 
   // updates heading state when phone changes orientation
@@ -81,19 +81,19 @@ export default function PositionMarker({
   }, []);
 
   useEffect(() => {
-    const lat = loc.lat;
-    const lng = loc.lng;
+    const lat = pos.lat;
+    const lng = pos.lng;
 
     if (!lat || !lng || !map || !tracking) return;
 
     map.panTo({ lat, lng });
     map.addListener("drag", () => {
-      onTracking(false);
+      onTrackingChange(false);
     });
-  }, [tracking, map, loc, onTrip]);
+  }, [tracking, map, pos, onTrip]);
 
-  return loc.lat && loc.lng ? (
-    <AdvancedMarker position={{ lat: loc.lat, lng: loc.lng }}>
+  return pos.lat && pos.lng ? (
+    <AdvancedMarker position={{ lat: pos.lat, lng: pos.lng }}>
       <div className="position" />
     </AdvancedMarker>
   ) : null;

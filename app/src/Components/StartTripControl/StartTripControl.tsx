@@ -6,21 +6,20 @@ import { Dispatch } from "react";
 
 interface StartTripCtrlProps {
   showStartTripButton: boolean;
-  onStartTrip: Dispatch<SetStateAction<boolean>>;
+  onStartTripSelected: Dispatch<SetStateAction<boolean>>;
   tracking: boolean;
-  onTracking: Dispatch<SetStateAction<boolean>>;
+  onTrackingChange: Dispatch<SetStateAction<boolean>>;
 }
 
 export default function StartTripControl({
   showStartTripButton,
-  onStartTrip,
+  onStartTripSelected,
   tracking,
-  onTracking,
+  onTrackingChange,
 }: StartTripCtrlProps) {
   const handleStartTrip = () => {
-    onTracking(true);
-    onStartTrip(true);
-    console.log("hadnling shit");
+    onTrackingChange(true);
+    onStartTripSelected(true);
   };
   return showStartTripButton && !tracking ? (
     <MapControl position={ControlPosition.LEFT_BOTTOM}>
