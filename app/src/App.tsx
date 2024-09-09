@@ -75,7 +75,6 @@ function App() {
             <PositionMarker
               onPosUpdate={setCurrPos}
               pos={currPos}
-              heading={heading}
               onHeadingChange={setHeading}
               mapCam={mapCam}
               onMapStateChange={setMapCam}

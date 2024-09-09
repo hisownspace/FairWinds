@@ -6,7 +6,6 @@ import { coords, mapCamState } from "../../../App";
 interface PosMarkProps {
   onPosUpdate: Dispatch<SetStateAction<coords>>;
   pos: coords;
-  heading: number;
   onHeadingChange: Dispatch<SetStateAction<number>>;
   mapCam: mapCamState;
   onMapStateChange: Dispatch<SetStateAction<mapCamState>>;
@@ -15,7 +14,6 @@ interface PosMarkProps {
 export default function PositionMarker({
   onPosUpdate,
   pos,
-  heading,
   onHeadingChange,
   mapCam,
   onMapStateChange,
@@ -40,7 +38,7 @@ export default function PositionMarker({
   // (nothing happens when accessed from desktop/laptop)
   const handleOrientation = (e: DeviceOrientationEvent) => {
     if (!e.alpha) return;
-    if (Math.abs(e.alpha - heading) < 5) return;
+    // if (Math.abs(e.alpha - heading) < 5) return;
     onHeadingChange(e.alpha);
   };
 

@@ -115,7 +115,7 @@ export default function Navigation({
   }, [routeSections, maps, map]);
 
   useEffect(() => {
-    if (!mapCam.onTrip || !map || !start) return;
+    if (!mapCam.onTrip || !mapCam.tracking || !map || !start) return;
     console.log("WHY NO DRAG?!?!?!?!?");
     if (start.bearing) {
       map.setHeading(start.bearing);
@@ -124,7 +124,7 @@ export default function Navigation({
     }
     map.setZoom(18);
     map.setTilt(45);
-  }, [mapCam.onTrip, camHeading, start]);
+  }, [mapCam.onTrip, mapCam.tracking, camHeading, start]);
 
   return null;
 }
