@@ -1,7 +1,7 @@
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import { useEffect, useRef } from "react";
 
-import { coords } from "../../App";
+import { coords } from "../../../App";
 
 interface LocRngProps {
   loc: coords;

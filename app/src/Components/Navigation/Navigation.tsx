@@ -4,6 +4,7 @@ import { coords } from "../../App";
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import axios from "axios";
 import { API_KEY } from "../../App";
+import { handleMapStateChange } from "../../MapView/MapView";
 
 interface NavProps {
   start: coords | undefined;
@@ -125,6 +126,7 @@ export default function Navigation({
     }
     map.setZoom(18);
     map.setTilt(45);
+    handleMapStateChange(tracking, startTrip, tripSummary);
   }, [startTrip, camHeading, start]);
 
   return null;

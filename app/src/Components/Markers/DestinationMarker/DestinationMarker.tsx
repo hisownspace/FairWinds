@@ -1,6 +1,6 @@
 import { AdvancedMarker } from "@vis.gl/react-google-maps";
 
-import { coords } from "../../App";
+import { coords } from "../../../App";
 
 interface DestMarkProps {
   dest: coords;

@@ -1,7 +1,7 @@
 import { useEffect, Dispatch, SetStateAction, useState } from "react";
 import { AdvancedMarker, useMap } from "@vis.gl/react-google-maps";
 
-import { coords } from "../../App";
+import { coords } from "../../../App";
 
 interface PosMarkProps {
   onPosUpdate: Dispatch<SetStateAction<coords>>;
