@@ -76,12 +76,12 @@ function App() {
           {!tracking && !showStartTripButton ? (
             <CenterControl onTrackingChange={setTracking} tracking={tracking} />
           ) : null}
-          <StartTripControl
-            showStartTripButton={showStartTripButton}
-            onStartTripSelected={setOnTrip}
-            tracking={tracking}
-            onTrackingChange={setTracking}
-          />
+          {showStartTripButton && !tracking ? (
+            <StartTripControl
+              onStartTripSelected={setOnTrip}
+              onTrackingChange={setTracking}
+            />
+          ) : null}
           <Geocoding address={address} onDestSelect={setDest} />
           <LocationRange loc={currPos} />
           <Navigation

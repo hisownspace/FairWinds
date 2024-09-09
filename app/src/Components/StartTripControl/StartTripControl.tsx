@@ -5,23 +5,19 @@ import { SetStateAction } from "react";
 import { Dispatch } from "react";
 
 interface StartTripCtrlProps {
-  showStartTripButton: boolean;
   onStartTripSelected: Dispatch<SetStateAction<boolean>>;
-  tracking: boolean;
   onTrackingChange: Dispatch<SetStateAction<boolean>>;
 }
 
 export default function StartTripControl({
-  showStartTripButton,
   onStartTripSelected,
-  tracking,
   onTrackingChange,
 }: StartTripCtrlProps) {
   const handleStartTrip = () => {
     onTrackingChange(true);
     onStartTripSelected(true);
   };
-  return showStartTripButton && !tracking ? (
+  return (
     <MapControl position={ControlPosition.LEFT_BOTTOM}>
       <div className="start-trip-container">
         <button className="start-trip-button" onClick={handleStartTrip}>
@@ -29,5 +25,5 @@ export default function StartTripControl({
         </button>
       </div>
     </MapControl>
-  ) : null;
+  );
 }
