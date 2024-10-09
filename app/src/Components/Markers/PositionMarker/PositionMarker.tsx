@@ -36,9 +36,10 @@ export default function PositionMarker({
 
   // updates heading state when phone changes orientation
   // (nothing happens when accessed from desktop/laptop)
-  const handleOrientation = (e: DeviceOrientationEvent) => {
+  const handleAbsoluteOrientation = (e: DeviceOrientationEvent) => {
     if (!e.alpha) return;
     // if (Math.abs(e.alpha - heading) < 5) return;
+    // console.log(e);
     onHeadingChange(e.alpha);
   };
 
@@ -69,7 +70,11 @@ export default function PositionMarker({
           handleGeolocationError,
         ),
       );
-      window.addEventListener("deviceorientation", handleOrientation, true);
+      window.addEventListener(
+        "deviceorientationabsolute",
+        handleAbsoluteOrientation,
+        true,
+      );
     }
     return () => {
       navigator.geolocation.clearWatch(watchId);

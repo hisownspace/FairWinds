@@ -3,5 +3,5 @@ interface NextDirProps {
 }
 
 export default function NextDirection({ nextTurn }: NextDirProps) {
-  return <div>{nextTurn}</div>;
+  return <div className="next-turn-container">{nextTurn}</div>;
 }
