@@ -1,4 +1,4 @@
-import { useEffect, Dispatch, SetStateAction, useState } from "react";
+import { useEffect, Dispatch, SetStateAction, useRef } from "react";
 import { AdvancedMarker, useMap } from "@vis.gl/react-google-maps";
 
 import { coords, mapCamState } from "../../../App";
@@ -18,20 +18,49 @@ export default function PositionMarker({
   mapCam,
   onMapStateChange,
 }: PosMarkProps) {
-  const [watchId, setWatchId] = useState<number>(0);
   const map = useMap();
+  const userPosition = useRef<coords[]>([]);
+  const watchIdRef = useRef<number>(0);
 
   // updates the currPos state when new location information is received
   const onPositionUpdate = (position: GeolocationPosition) => {
     const lat = position.coords.latitude;
     const lng = position.coords.longitude;
-    const bearing = position.coords.heading;
+    const heading = position.coords.heading;
     const accuracy = position.coords.accuracy;
 
-    const posInfo = { lat, lng, bearing, accuracy };
+    const posInfo = { lat, lng, heading, accuracy };
+
+    const deltaLat = userPosition.current.reduce((prev, curr) => {
+      const tempDelta = curr.lat - lat;
+      return tempDelta >= 0
+        ? Math.max(prev, tempDelta)
+        : Math.min(prev, tempDelta);
+    }, 0);
+    const deltaLng = userPosition.current.reduce((prev, curr) => {
+      const tempDelta = curr.lng - lng;
+      return tempDelta >= 0
+        ? Math.max(prev, tempDelta)
+        : Math.min(prev, tempDelta);
+    }, 0);
+
+    if (Math.sqrt(deltaLat ** 2 + deltaLng ** 2) > 0.0001) {
+      const direction = 90 - (Math.atan2(deltaLat, deltaLng) * 180) / Math.PI;
+      const distance = Math.sqrt(deltaLat ** 2 + deltaLng ** 2);
+      console.log("DIRECTION ===============>", direction);
+      console.log("HEADING =================>", heading);
+      console.log("DISTANCE MOVED ==========>", distance);
+      userPosition.current = [];
+    } else if (userPosition.current.length > 100) {
+      userPosition.current = [];
+    }
+    console.log(userPosition.current.length);
+
+    // if (userPosition.current.length > 100 || Math.sqrt(deltaLat ** 2 + deltaLng ** 2))
 
     if (JSON.stringify(posInfo) === JSON.stringify(pos)) return;
-    onPosUpdate({ lat, lng, bearing, accuracy });
+    userPosition.current.push(posInfo);
+    onPosUpdate({ lat, lng, heading, accuracy });
   };
 
   // updates heading state when phone changes orientation
@@ -60,24 +89,24 @@ export default function PositionMarker({
 
   useEffect(() => {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
+      // navigator.geolocation.getCurrentPosition(
+      //   onPositionUpdate,
+      //   handleGeolocationError,
+      // );
+      (watchIdRef.current = navigator.geolocation.watchPosition(
         onPositionUpdate,
         handleGeolocationError,
-      );
-      setWatchId(
-        navigator.geolocation.watchPosition(
-          onPositionUpdate,
-          handleGeolocationError,
-        ),
-      );
-      window.addEventListener(
-        "deviceorientationabsolute",
-        handleAbsoluteOrientation,
-        true,
-      );
+        { enableHighAccuracy: true },
+      )),
+        window.addEventListener(
+          "deviceorientationabsolute",
+          handleAbsoluteOrientation,
+          true,
+        );
     }
     return () => {
-      navigator.geolocation.clearWatch(watchId);
+      console.log("WATCH ID ==================>>>>>>>>>", watchIdRef.current);
+      navigator.geolocation.clearWatch(watchIdRef.current);
     };
   }, []);
 

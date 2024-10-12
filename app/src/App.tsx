@@ -21,7 +21,7 @@ const MAP_ID: string = import.meta.env.VITE_GOOGLE_MAPS_MAP_ID!;
 export interface coords {
   lat: number;
   lng: number;
-  bearing: number | null;
+  heading: number | null;
   accuracy: number;
 }
 

@@ -116,9 +116,13 @@ export default function Navigation({
 
   useEffect(() => {
     if (!mapCam.onTrip || !mapCam.tracking || !map || !start) return;
-    console.log("WHY NO DRAG?!?!?!?!?");
-    if (start.bearing) {
-      map.setHeading(start.bearing);
+    if (start.heading) {
+      // under construction - this should set the direction of the map
+      // based on the direction that the user is heading - either based on 
+      // their motion or the polyline they're travelling along, or possibly
+      // some combination of the two
+      // map.setHeading(360 - start.heading);
+      map.setHeading(360 - camHeading);
     } else if (camHeading) {
       map.setHeading(360 - camHeading);
     }
