@@ -23,6 +23,7 @@ export interface coords {
   lng: number;
   heading: number | null;
   accuracy: number;
+  time: number;
 }
 
 export interface mapCamState {

@@ -11,6 +11,8 @@ interface PosMarkProps {
   onMapStateChange: Dispatch<SetStateAction<mapCamState>>;
 }
 
+const numDeltas: number = 10;
+
 export default function PositionMarker({
   onPosUpdate,
   pos,
@@ -19,7 +21,6 @@ export default function PositionMarker({
   onMapStateChange,
 }: PosMarkProps) {
   const map = useMap();
-  const userPosition = useRef<coords[]>([]);
   const watchIdRef = useRef<number>(0);
 
   // updates the currPos state when new location information is received
@@ -28,39 +29,29 @@ export default function PositionMarker({
     const lng = position.coords.longitude;
     const heading = position.coords.heading;
     const accuracy = position.coords.accuracy;
+    const time = Date.now();
 
-    const posInfo = { lat, lng, heading, accuracy };
+    const speed: number = 0;
 
-    const deltaLat = userPosition.current.reduce((prev, curr) => {
-      const tempDelta = curr.lat - lat;
-      return tempDelta >= 0
-        ? Math.max(prev, tempDelta)
-        : Math.min(prev, tempDelta);
-    }, 0);
-    const deltaLng = userPosition.current.reduce((prev, curr) => {
-      const tempDelta = curr.lng - lng;
-      return tempDelta >= 0
-        ? Math.max(prev, tempDelta)
-        : Math.min(prev, tempDelta);
-    }, 0);
-
-    if (Math.sqrt(deltaLat ** 2 + deltaLng ** 2) > 0.0001) {
-      const direction = 90 - (Math.atan2(deltaLat, deltaLng) * 180) / Math.PI;
-      const distance = Math.sqrt(deltaLat ** 2 + deltaLng ** 2);
-      console.log("DIRECTION ===============>", direction);
-      console.log("HEADING =================>", heading);
-      console.log("DISTANCE MOVED ==========>", distance);
-      userPosition.current = [];
-    } else if (userPosition.current.length > 100) {
-      userPosition.current = [];
+    if (speed > 5) {
     }
-    console.log(userPosition.current.length);
 
-    // if (userPosition.current.length > 100 || Math.sqrt(deltaLat ** 2 + deltaLng ** 2))
+    const posInfo = { lat, lng, heading, accuracy, time };
 
+    // Prevents rerendering
     if (JSON.stringify(posInfo) === JSON.stringify(pos)) return;
-    userPosition.current.push(posInfo);
-    onPosUpdate({ lat, lng, heading, accuracy });
+    transition(lat, lng);
+  };
+
+  const transition = (lat: number, lng: number) => {
+    const heading = pos.heading;
+    const accuracy = pos.accuracy;
+    const time = pos.time;
+    for (let i = 1; i < numDeltas + 1; i++) {
+      lng = pos.lng + (i * (lng - pos.lng)) / numDeltas;
+      lat = pos.lat + (i * (lat - pos.lat)) / numDeltas;
+      onPosUpdate({ lat, lng, heading, accuracy, time });
+    }
   };
 
   // updates heading state when phone changes orientation
