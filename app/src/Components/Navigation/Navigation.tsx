@@ -121,7 +121,7 @@ export default function Navigation({
       // based on the direction that the user is heading - either based on
       // their motion or the polyline they're travelling along, or possibly
       // some combination of the two
-      map.setHeading(360 - start.heading);
+      map.setHeading(start.heading);
       // map.setHeading(360 - camHeading);
     } else if (camHeading) {
       map.setHeading(360 - camHeading);
