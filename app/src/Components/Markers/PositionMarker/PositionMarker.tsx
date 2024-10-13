@@ -30,18 +30,52 @@ export default function PositionMarker({
   const onPositionUpdate = (position: GeolocationPosition) => {
     const lat = position.coords.latitude;
     const lng = position.coords.longitude;
-    const heading = position.coords.heading;
+    let heading = position.coords.heading;
     const acc = position.coords.accuracy;
     const time = Date.now();
 
-    const speed: number = 0;
+    // uses haversines formula to calculate distance travelled between last
+    // two given locations, then using the two timestamps determines the
+    // approximate speed of the device. if the speed is below a certain
+    // threshold, heading information is ignored.
 
-    if (speed > 5) {
+    const R = 3960; // appromixate radius of earth in miles
+    const prevLat = positionRef.current.lat;
+    const prevLng = positionRef.current.lng;
+    const deltaLat = prevLat - lat;
+    const deltaLng = prevLng - lng;
+    const sin = Math.sin;
+    const cos = Math.cos;
+    const asin = Math.asin;
+    const sqrt = Math.sqrt;
+
+    // haversine formula
+    const distance =
+      2 *
+      R *
+      asin(
+        sqrt(
+          sin(convertToRad(deltaLat) / 2) ** 2 +
+            cos(convertToRad(prevLat)) *
+              cos(convertToRad(lat)) *
+              sin(convertToRad(deltaLng) / 2) ** 2,
+        ),
+      );
+
+    const elapsedTime = time - positionRef.current.time;
+    const mph = distance / (elapsedTime * 3600000);
+
+    if (mph < 10) {
+      heading = NaN;
     }
 
-    // prevents jumping of marker from new location received during animation
+    // prevents jumping of marker if new location is received during animation
     if (time - positionRef.current.time < 1000) return;
     transition(lat, lng, heading, acc, time);
+  };
+
+  const convertToRad = (deg: number) => {
+    return (deg / 180) * Math.PI;
   };
 
   const transition = (
@@ -87,7 +121,7 @@ export default function PositionMarker({
               time,
             };
             i++;
-            if (i < numDeltas) animate();
+            if (i <= numDeltas) animate();
           },
           Math.floor(1000 / numDeltas),
         );
