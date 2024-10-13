@@ -22,7 +22,7 @@ export interface coords {
   lat: number;
   lng: number;
   heading: number | null;
-  accuracy: number;
+  acc: number;
   time: number;
 }
 

@@ -11,7 +11,7 @@ interface PosMarkProps {
   onMapStateChange: Dispatch<SetStateAction<mapCamState>>;
 }
 
-const numDeltas: number = 10;
+const numDeltas: number = 100;
 
 export default function PositionMarker({
   onPosUpdate,
@@ -22,13 +22,16 @@ export default function PositionMarker({
 }: PosMarkProps) {
   const map = useMap();
   const watchIdRef = useRef<number>(0);
+  // position ref does not require the heading or time values, but it seemed
+  // simpler to use the coords type than create a new one for this ref
+  const positionRef = useRef<coords>(pos);
 
   // updates the currPos state when new location information is received
   const onPositionUpdate = (position: GeolocationPosition) => {
     const lat = position.coords.latitude;
     const lng = position.coords.longitude;
     const heading = position.coords.heading;
-    const accuracy = position.coords.accuracy;
+    const acc = position.coords.accuracy;
     const time = Date.now();
 
     const speed: number = 0;
@@ -36,21 +39,60 @@ export default function PositionMarker({
     if (speed > 5) {
     }
 
-    const posInfo = { lat, lng, heading, accuracy, time };
-
-    // Prevents rerendering
-    if (JSON.stringify(posInfo) === JSON.stringify(pos)) return;
-    transition(lat, lng);
+    // prevents jumping of marker from new location received during animation
+    if (time - positionRef.current.time < 1000) return;
+    transition(lat, lng, heading, acc, time);
   };
 
-  const transition = (lat: number, lng: number) => {
-    const heading = pos.heading;
-    const accuracy = pos.accuracy;
-    const time = pos.time;
-    for (let i = 1; i < numDeltas + 1; i++) {
-      lng = pos.lng + (i * (lng - pos.lng)) / numDeltas;
-      lat = pos.lat + (i * (lat - pos.lat)) / numDeltas;
-      onPosUpdate({ lat, lng, heading, accuracy, time });
+  const transition = (
+    lat: number,
+    lng: number,
+    heading: number | null,
+    acc: number,
+    time: number,
+  ) => {
+    // smooths movement of position marker and accuracy circle when new location is received
+    if (!positionRef.current.lat || !positionRef.current.lng) {
+      // sets initial position of marker
+      onPosUpdate({ lat, lng, heading, acc, time });
+      positionRef.current = { lat, lng, heading, acc, time };
+    } else {
+      // sets numDelta intermediary steps between previous and current location to create
+      // appearance of smooth movement. causes a 1 second delay, which is barely noticeable
+      const tempLat = positionRef.current.lat;
+      const tempLng = positionRef.current.lng;
+      const tempAcc = positionRef.current.acc;
+      let i = 0;
+      const animate = () => {
+        setTimeout(
+          () => {
+            // each calculation here moves the corresponding attribute
+            // from the orginal value to 1/numDelta of the way to the
+            // current value
+            let accuracy = tempAcc + (i * (acc - tempAcc)) / numDeltas;
+            let longitude = tempLng + (i * (lng - tempLng)) / numDeltas;
+            let latitude = tempLat + (i * (lat - tempLat)) / numDeltas;
+            onPosUpdate({
+              lat: latitude,
+              lng: longitude,
+              heading,
+              acc: accuracy,
+              time,
+            });
+            positionRef.current = {
+              lat: latitude,
+              lng: longitude,
+              heading,
+              acc: accuracy,
+              time,
+            };
+            i++;
+            if (i < numDeltas) animate();
+          },
+          Math.floor(1000 / numDeltas),
+        );
+      };
+      animate();
     }
   };
 
@@ -58,8 +100,6 @@ export default function PositionMarker({
   // (nothing happens when accessed from desktop/laptop)
   const handleAbsoluteOrientation = (e: DeviceOrientationEvent) => {
     if (!e.alpha) return;
-    // if (Math.abs(e.alpha - heading) < 5) return;
-    // console.log(e);
     onHeadingChange(e.alpha);
   };
 
@@ -80,10 +120,6 @@ export default function PositionMarker({
 
   useEffect(() => {
     if (navigator.geolocation) {
-      // navigator.geolocation.getCurrentPosition(
-      //   onPositionUpdate,
-      //   handleGeolocationError,
-      // );
       (watchIdRef.current = navigator.geolocation.watchPosition(
         onPositionUpdate,
         handleGeolocationError,
@@ -96,7 +132,6 @@ export default function PositionMarker({
         );
     }
     return () => {
-      console.log("WATCH ID ==================>>>>>>>>>", watchIdRef.current);
       navigator.geolocation.clearWatch(watchIdRef.current);
     };
   }, []);

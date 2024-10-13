@@ -14,7 +14,7 @@ export default function LocationRange({ loc }: LocRngProps) {
   const circle = useRef<google.maps.Circle | null>(null);
 
   useEffect(() => {
-    const acc = loc.accuracy;
+    const acc = loc.acc;
     const lat = loc.lat;
     const lng = loc.lng;
 
@@ -29,7 +29,7 @@ export default function LocationRange({ loc }: LocRngProps) {
         fillOpacity: 0.1,
         map,
         center: { lat: loc.lat, lng: loc.lng },
-        radius: loc.accuracy,
+        radius: loc.acc,
       });
       circ.setMap(map);
       circle.current = circ;
@@ -59,7 +59,7 @@ export default function LocationRange({ loc }: LocRngProps) {
   }, []);
 
   useEffect(() => {
-    const acc = loc.accuracy;
+    const acc = loc.acc;
     const lat = loc.lat;
     const lng = loc.lng;
     // console.log(circle);
