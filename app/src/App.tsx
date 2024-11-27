@@ -46,12 +46,16 @@ function App() {
   const [nextTurn, setNextTurn] = useState<string>("");
 
   useEffect(() => {
+    // Do nothing if dest and currPos are undefined
     if (!dest || !currPos) return;
+    // Check if dest and currPos have not been set yet
     const destIsEmpty = Object.values(dest).every((x) => !x);
     const currPosIsEmpty = Object.values(currPos).every((x) => !x);
     if (
       destIsEmpty ||
       currPosIsEmpty ||
+      // Makes sure that we don't try to reset start to currPos if they are already the same
+      // which avoids infinite rerenders
       JSON.stringify(currPos) === JSON.stringify(start)
     )
       return;
