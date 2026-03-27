@@ -33,8 +33,11 @@ export default function PositionMarker({
     let heading = position.coords.heading;
     const acc = position.coords.accuracy;
     const time = Date.now();
+    console.log("Heading:", heading);
+    console.log("Speed:", position.coords.speed);
+    console.log("Position Object:", position);
 
-    // uses haversines formula to calculate distance travelled between last
+    // uses haversine formula to calculate distance travelled between last
     // two given locations, then using the two timestamps determines the
     // approximate speed of the device. if the speed is below a certain
     // threshold, heading information is ignored.
@@ -55,15 +58,16 @@ export default function PositionMarker({
       R *
       asin(
         sqrt(
-          sin(convertToRad(deltaLat) / 2) ** 2 +
-            cos(convertToRad(prevLat)) *
-              cos(convertToRad(lat)) *
-              sin(convertToRad(deltaLng) / 2) ** 2,
+          sin(convertToRad(deltaLat) / 2) ** 2 
+            + cos(convertToRad(prevLat)) 
+                * cos(convertToRad(lat)) 
+                  * sin(convertToRad(deltaLng) / 2) ** 2,
         ),
       );
 
     const elapsedTime = time - positionRef.current.time;
     const mph = distance / (elapsedTime * 3600000);
+    console.log("MPH:", mph);
 
     if (mph < 10) {
       heading = NaN;
@@ -139,6 +143,7 @@ export default function PositionMarker({
 
   const handleGeolocationError = (err: GeolocationPositionError) => {
     const { code }: { code: number } = err;
+    console.log(code);
     switch (code) {
       case GeolocationPositionError.PERMISSION_DENIED:
         // Handle Permission Denied Error
@@ -153,12 +158,13 @@ export default function PositionMarker({
   };
 
   useEffect(() => {
+    console.log("in useeffect");
     if (navigator.geolocation) {
       (watchIdRef.current = navigator.geolocation.watchPosition(
         onPositionUpdate,
         handleGeolocationError,
         { enableHighAccuracy: true },
-      )),
+      ))
         window.addEventListener(
           "deviceorientationabsolute",
           handleAbsoluteOrientation,
